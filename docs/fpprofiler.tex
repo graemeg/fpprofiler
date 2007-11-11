@@ -1,0 +1,88 @@
+% This document is ``public domain''. It may be printed and
+% distributed free of charge in its original form (including the
+% list of authors). If it is changed or if parts of it are used
+% within another document, then the author list must include
+% all the original authors AND that author (those authors) who
+% has (have) made the changes.
+%
+% Copyright Darius Blaszijk (2006).
+
+\documentclass[twoside]{book}
+
+%===============================================================================
+% creating new commands
+%===============================================================================
+\newcommand{\documenttitle}{Free Pascal Profiler User manual}
+\newcommand{\fpp}{Free Pascal Profiler}
+\newcommand{\fpprofilerversion}{0.1.0}
+\newcommand{\fpprofilerwebsite}{\url{http://www.freepascal.org}}
+\newcommand{\authors}{Darius Blaszijk}
+\newcommand{\pascalfile}[1]{
+  \lstset{language=pascal, frame=single, basicstyle=\ttfamily, showstringspaces=false}
+  \lstinputlisting{#1}}
+
+%===============================================================================
+% defining packages
+%===============================================================================
+\usepackage{url}
+\usepackage[colorlinks=true,
+            linkcolor=black,
+            citecolor=darkblue,
+            urlcolor=black,
+            backref=false,
+            a4paper=true,
+            bookmarksopen= true,
+            bookmarksopenlevel = 0, % -1 = part,    0 = chapter,
+                                    %  1 = section, 2 = subsection
+            bookmarksnumbered = true,
+            plainpages=false,
+            draft = false,
+            pdftex = true,
+            pdfmenubar = true,
+            pdftoolbar = true,
+            pdfpagelabels = true,
+            pdfhighlight=/I,
+            pdfstartview=FitH,
+            pdftitle={\documenttitle}
+            ]{hyperref}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{listings}
+\usepackage{palatino}
+
+\begin{document}
+
+%===============================================================================
+% including all parts of the manual
+%===============================================================================
+\include{titlepage}                    %document title page
+\include{technical_note}               %technical notes
+\tableofcontents
+
+\chapter{Introduction}
+The \fpp is an effort to create an FPC native profiler, deployable on all platforms and
+architectures the Free Pascal compiler supports.
+
+\section{About this document}
+This is the user manual for \fpp. It describes the
+installation and use of \fpp on the different supported
+platforms. This document describes \fpp as it is at the time
+of writing.
+
+\section{Getting more information}
+More information or new releases can be found on the \fpp
+site \fpprofilerwebsite.
+
+\section{Getting the sources}
+The sources for \fpp are available from SVN here: \url{http://svn.freepascal.org/svn/fpcprojects/fpprofiler/}.
+
+\section{Introduction to profiling}
+
+
+\listoftables
+\listoffigures
+\appendix                              %the appendices start here
+\include{fdl}                          %GNU free document license
+%===============================================================================
+
+\end{document}
