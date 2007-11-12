@@ -903,6 +903,7 @@ begin
         //WriteLn('Kommentar: "', CurTokenString, '"');
         if (Length(CurTokenString) > 0) and (CurTokenString[1] = '$') then
         begin
+          Result := tkDirective;
           TokenStart := @CurTokenString[2];
           CurPos := TokenStart;
           while (CurPos[0] <> ' ') and (CurPos[0] <> #0) do
@@ -1094,46 +1095,6 @@ begin
           begin
             Result := i;
             FCurToken := Result;
-            
-            //case Result of
-              //tkAsm: if (poMonoLithicASMBlocks in Options) then
-                     //begin
-                       //CommentLevel := 0;
-                       //IsString := False;
-                       //repeat
-                         //FetchLine;
-
-                         ////IsLineComment := False;
-
-                         ////for index := 0 to Length(TokenStr) do
-                         ////begin
-                           ////case TokenStr[index] of
-                             ////'{': Inc(CommentLevel);
-                             ////'}': Dec(CommentLevel);
-                             ////'''': IsString := not IsString;
-                             ////'/': if TokenStr[index+1] = '/' then
-                                  ////begin
-                                    ////IsLineComment := True;
-                                    ////break;
-                                  ////end
-                           ////end;
-                         ////end;
-
-                         //TempTokenPos := pos('end', TokenStr);
-
-                         //if TempTokenPos > 0 then
-                           //TempTokenString := TempTokenString + Copy(TokenStr, 1, TempTokenPos + 2) + LineEnding
-                         //else
-                           //TempTokenString := TempTokenString + TokenStr + LineEnding;
-
-                       //until TempTokenPos > 0;
-
-                       //for Index := 0 to TempTokenPos+1 do
-                         //Inc(TokenStr);
-
-                       //FCurTokenString := FCurTokenString + LineEnding + TempTokenString;
-                     //end;
-            //end;
             exit;
           end;
 
