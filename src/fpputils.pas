@@ -166,12 +166,6 @@ begin
     except
       writeln(' .......... FAIL');
       writeln(IgnoreFile, FileList[i]);
-      //DeleteFile(FileList[i]);
-      //if not RenameFile(FileList[i] + FPPROF_EXT, FileList[i]) then
-      //begin
-        //writeln(' CANNOT REVERT FILE: HALTING!!');
-        //halt;
-      //end;
     end;
   end;
   close(IgnoreFile);
