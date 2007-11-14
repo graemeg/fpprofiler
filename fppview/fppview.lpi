@@ -4,14 +4,13 @@
     <PathDelim Value="\"/>
     <Version Value="6"/>
     <General>
+      <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
+      <IconPath Value="./"/>
       <TargetFileExt Value=".exe"/>
-      <ActiveEditorIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <ProjectVersion Value=""/>
-      <Language Value=""/>
-      <CharSet Value=""/>
     </VersionInfo>
     <PublishOptions>
       <Version Value="2"/>
@@ -22,6 +21,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="C:\Develop\fpprofiler\trunk\fppview\test.exe.fpprof"/>
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
@@ -29,15 +29,9 @@
       <Unit0>
         <Filename Value="fppview.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="fpprofile"/>
-        <CursorPos X="1" Y="1"/>
-        <TopLine Value="1"/>
-        <EditorIndex Value="0"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
+        <UnitName Value="fppview"/>
       </Unit0>
     </Units>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
@@ -52,39 +46,4 @@
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
-  <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Source Value="..\fpp\test\passrctest.pp"/>
-        <Line Value="33"/>
-      </Item1>
-    </BreakPoints>
-    <Watches Count="5">
-      <Item1>
-        <Expression Value="Info.Name"/>
-      </Item1>
-      <Item2>
-        <Expression Value="Ext"/>
-      </Item2>
-      <Item3>
-        <Expression Value="token"/>
-      </Item3>
-      <Item4>
-        <Expression Value="PasTokenList[index-1]"/>
-      </Item4>
-      <Item5>
-        <Expression Value="pas"/>
-      </Item5>
-    </Watches>
-    <Exceptions Count="2">
-      <Item1>
-        <Name Value="ECodetoolError"/>
-        <Enabled Value="False"/>
-      </Item1>
-      <Item2>
-        <Name Value="EFOpenError"/>
-        <Enabled Value="False"/>
-      </Item2>
-    </Exceptions>
-  </Debugging>
 </CONFIG>

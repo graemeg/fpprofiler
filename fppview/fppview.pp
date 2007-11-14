@@ -1,34 +1,19 @@
-program fpprofile;
+program fppview;
+
+{$mode objfpc}{$H+}
 
 uses
-  strings, contnrs;
+  strings, contnrs, FPPLogReader, FPPStats;
 
-type
-  TFrame = record
-             elapsed: longint;
-             func: string;
-             source: string;
-             line: integer;
-           end;
-  TFrames = array of TFrame;
-  
 var
-  T: Text;
-  s: string;
-  FrameList: TFrames;
-
-procedure processline(s: string);
+  FPPReader: TFPPLogReader;
+  ProfStats: TCustomProfStats;
 begin
-end;
+  FPPReader := TFPPLogReader.Create(ParamStr(1));
 
-begin
-  assign(T, ParamStr(1));
-  reset(T);
-  
-  while not eof(T) do
-  begin
-    readln(T, s);
-    processline(s);
-  end;
+  ProfStats := TCallingListProfStats.Create(FPPReader);
+
   readln;
+  FPPReader.Free;
+  ProfStats.Free;
 end.
