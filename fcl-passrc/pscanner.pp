@@ -529,11 +529,6 @@ var
   OldLength, SectionLength, NestingLevel, Index: Integer;
   Directive, Param: string;
   IncludeStackItem: TIncludeStackItem;
-  TempTokenString: string;
-  TempTokenPos: integer;
-  CommentLevel: integer;
-  IsString: boolean;
-  IsLineComment: boolean;
 begin
   if TokenStr = nil then
     if not FetchLine then
@@ -1097,7 +1092,7 @@ begin
             FCurToken := Result;
             exit;
           end;
-
+          
         Result := tkIdentifier;
       end;
   else
