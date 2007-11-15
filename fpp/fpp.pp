@@ -62,27 +62,34 @@ var
     var
       i: integer;
     begin
+    //find uses clause and insert unit
       for i := 0 to tokenlist.Count - 1 do
         if TPasToken(tokenlist[i]^).token = tkUses then
         begin
+        //insert fpprof unit (with whitespace and comma)
           InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof,');
           Exit;
         end;
 
+    //unit not found, find program / unit keyword
       for i := 0 to tokenlist.Count - 1 do
         if (TPasToken(tokenlist[i]^).token = tkProgram) or
           (TPasToken(tokenlist[i]^).token = tkUnit) then
         begin
+        //insert fpprof unit (with uses keyword)
           InsertToken(tokenlist, i + 1, tkIdentifier, 'uses fpprof;');
           Exit;
         end;
 
+    //just try and insert it at the beginning
       InsertToken(tokenlist, 1, tkIdentifier, 'uses fpprof;');
     end;
 
   begin
+  //insert fpprof unit
     InsertFPProfUnit;
 
+  //insert function fpprof_info after each tkBegin and before each tkEnd
     i := 0;
     while i < tokenlist.Count do
     begin
@@ -101,6 +108,7 @@ var
       Inc(i);
     end;
 
+  //save result for debuging
     SaveTokenList('test.debug.pp', tokenlist);
   end;
 
@@ -128,7 +136,7 @@ var
         '-': if pos('-FU', ParamStr(i)) <> 0 then
             AddSearchPath(copy(ParamStr(i), 4, Length(ParamStr(i)) - 3));
         else
-
+      //filename
           AddSearchPath(ExtractFilePath(param));
       end;
     end;
@@ -148,6 +156,8 @@ var
     for i := 0 to PathList.Count - 1 do
       RecursiveFileSearch(PathList[i], ExtensionMask, Result);
   end;
+
+{ TFPPApplication }
 
   procedure TFPPApplication.ShowHelp;
   begin
@@ -175,6 +185,7 @@ var
 
     writeln('executing: ', FPCProcess.CommandLine);
     writeln;
+  
     FPCProcess.Options := FPCProcess.Options + [poWaitOnExit];
     FPCProcess.Execute;
 
@@ -197,8 +208,13 @@ var
   begin
     ShowHelp;
 
+  //insert profiling code
     InsertProfilingCode(Environment.FileList('.pp;.pas;.inc;.lpr'), @ModifyCode);
 
+  //compile the sources
+  //Compile;
+
+    //remove the profiling code
     RemoveProfilingCode(Environment.FileList('.fpprof'));
   end;
 
