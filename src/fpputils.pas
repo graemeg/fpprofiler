@@ -49,7 +49,7 @@ begin
     New(pt);
     pt^.token:= token;
     pt^.value:= pas.CurTokenString;
-    PasTokenList.Add(@pt);
+    PasTokenList.Add(pt);
 
     {$ifdef debug}
     writeln(token, '>', pas.CurTokenString);

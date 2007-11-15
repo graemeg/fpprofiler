@@ -61,5 +61,6 @@ begin
   else
     writeln('info: test succeeded');
 
+  FileList.Free;
   FPCProcess.Free;
 end.

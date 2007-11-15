@@ -3,7 +3,7 @@ program fpp;
 {$mode objfpc}
 
 uses
-  Classes, Process, CustApp, SysUtils, fpputils;
+  Classes, Process, CustApp, SysUtils, fpputils, PScanner;
 
 type
 
@@ -12,14 +12,15 @@ type
   TEnvironment = class(TObject)
   private
     FCommandLine: string;
-    FFileList: TStrings;
+    FPathList:    TStrings;
     procedure AddSearchPath(path: string);
   public
     constructor Create;
     destructor Destroy; override;
-
+    
     property CommandLine: string read FCommandLine write FCommandLine;
-    property FileList: TStrings read FFileList write FFileList;
+    property PathList: TStrings read FPathList write FPathList;
+    function FileList(ExtensionMask: string): TStrings;
   end;
 
   { TFPPApplication }
@@ -31,8 +32,6 @@ type
 
     procedure ShowHelp;
     procedure Show(msg: string);
-    procedure InsertProfilingCode;
-    procedure RemoveProfilingCode;
     procedure Compile;
   public
     constructor Create(TheOwner: TComponent); override;
@@ -41,188 +40,171 @@ type
     procedure Run;
   end;
 
-procedure TEnvironment.AddSearchPath(path: string);
-var
-  Info : TSearchRec;
-  Ext: string;
-  SearchDir: string;
-begin
-  //search all source files in this path
-  SearchDir := path;
-  if FindFirst(SearchDir+'*', faAnyFile, Info)=0 then
-    repeat
-      Ext := ExtractFileExt(Info.Name);
-
-      if (Ext = '.pas') or (Ext = '.pp') or (Ext = '.inc') then
-        FileList.Add(SearchDir + Info.Name);
-
-    until FindNext(info)<>0;
-
-  FindClose(Info);
-end;
-
-constructor TEnvironment.Create;
-var
-  i: integer;
-  param: string;
-begin
-  inherited Create;
-  
-  FileList := TStringList.Create;
-
-  CommandLine := ' -g ';
-
-  for i := 1 to ParamCount do
-  begin
-    CommandLine := CommandLine + ' ' + ParamStr(i);
-    
-    param := ParamStr(i);
-    
-    case param[1] of
-      '-' : begin
-              if pos('-FU', ParamStr(i)) <> 0 then
-                AddSearchPath(copy(ParamStr(i), 4, Length(ParamStr(i)) - 3));
-             end;
-    else
-      //filename
-      FileList.Add(param);
-    end;
-  end;
-end;
-
-destructor TEnvironment.Destroy;
-begin
-  FileList.Free;
-  
-  inherited Destroy;
-end;
 
 var
   Application: TFPPApplication;
 
-{ TFPPApplication }
-
-procedure TFPPApplication.ShowHelp;
-begin
-  writeln('GNU FreePascal profiler 0.1');
-  writeln('Copyright 2007 Darius Blaszyk.');
-  writeln('FPP is free software, covered by the GNU General Public License, and you are');
-  writeln('welcome to change it and/or distribute copies of it under certain conditions.');
-  writeln('There is absolutely no warranty for FPP.');
-  writeln;
-end;
-
-procedure TFPPApplication.Show(msg: string);
-begin
-  if Verbose then
-    Writeln(msg);
-end;
-
-procedure TFPPApplication.InsertProfilingCode;
-var
-  i: integer;
-  source: Text;
-  target: Text;
-  s: string;
-  index: integer;
-begin
-  for i := 0 to Environment.FileList.Count - 1 do
+  procedure InsertToken(ATokenList: TFPList; APos: integer; AToken: TToken; AValue: string);
+  var
+    pt: ^TPasToken;
   begin
-    RenameFile(Environment.FileList[i],Environment.FileList[i] + '.fpprof');
+    New(pt);
+    pt^.token := AToken;
+    pt^.Value := AValue;
+    ATokenList.Insert(APos, pt);
+  end;
 
-    assignfile(source, Environment.FileList[i] + '.fpprof');
-    reset(source);
+  procedure ModifyCode(tokenlist: TFPList);
+  var
+    i: integer;
 
-    assignfile(target, Environment.FileList[i]);
-    rewrite(target);
-
-    while not eof(source) do
+    procedure InsertFPProfUnit;
+    var
+      i: integer;
     begin
-      Readln(source, s);
-      
-      //replace by fcl-passrc??
-      
-      //note: add uses clause
-      //note: skip comments
-      //note: skip literal strings
-      
-      //add function calls
-      index := pos('begin', s);
-      if index <> 0 then
-        insert(' fpprof_profile; ', s, index + 5);
+      for i := 0 to tokenlist.Count - 1 do
+        if TPasToken(tokenlist[i]^).token = tkUses then
+        begin
+          InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof,');
+          Exit;
+        end;
 
-      index := pos('end;', s);
-      if index <> 0 then
-        insert(' fpprof_profile; ', s, index);
+      for i := 0 to tokenlist.Count - 1 do
+        if (TPasToken(tokenlist[i]^).token = tkProgram) or
+          (TPasToken(tokenlist[i]^).token = tkUnit) then
+        begin
+          InsertToken(tokenlist, i + 1, tkIdentifier, 'uses fpprof;');
+          Exit;
+        end;
 
-      index := pos('end.', s);
-      if index <> 0 then
-        insert(' fpprof_profile; ', s, index);
-
-      Writeln(target, s);
+      InsertToken(tokenlist, 1, tkIdentifier, 'uses fpprof;');
     end;
 
-    closefile(target);
-    closefile(source);
-  end;
-end;
-
-procedure TFPPApplication.RemoveProfilingCode;
-var
-  i: integer;
-begin
-  for i := 0 to Environment.FileList.Count - 1 do
   begin
-    DeleteFile(Environment.FileList[i]);
-    RenameFile(Environment.FileList[i] + '.fpprof', Environment.FileList[i]);
+    InsertFPProfUnit;
+
+    i := 0;
+    while i < tokenlist.Count do
+    begin
+      case TPasToken(tokenlist[i]^).token of
+        tkBegin:
+        begin
+          InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof_profile; ');
+          Inc(i);
+        end;
+        tkEnd:
+        begin
+          InsertToken(tokenlist, i - 1, tkIdentifier, ' fpprof_profile; ');
+          Inc(i);
+        end;
+      end;
+      Inc(i);
+    end;
+
+    SaveTokenList('test.debug.pp', tokenlist);
   end;
-end;
 
-procedure TFPPApplication.Compile;
-var
-  FPCProcess: TProcess;
-begin
-  FPCProcess := TProcess.Create(nil);
+  procedure TEnvironment.AddSearchPath(path: string);
+  begin
+    if DirectoryExists(path) then
+      PathList.Add(path);
+  end;
 
-  FPCProcess.CommandLine := 'fpc ' + Environment.CommandLine;
+  constructor TEnvironment.Create;
+  var
+    i:     integer;
+    param: string;
+  begin
+    inherited Create;
+    PathList := TStringList.Create;
 
-  writeln('executing: ', FPCProcess.CommandLine);
-  writeln;
-  
-  FPCProcess.Options := FPCProcess.Options + [poWaitOnExit];
-  FPCProcess.Execute;
+    CommandLine := '';
 
-  FPCProcess.Free;
-end;
+    for i := 1 to ParamCount do
+    begin
+      CommandLine := CommandLine + ' ' + ParamStr(i);
+      param := ParamStr(i);
+      case param[1] of
+        '-': if pos('-FU', ParamStr(i)) <> 0 then
+            AddSearchPath(copy(ParamStr(i), 4, Length(ParamStr(i)) - 3));
+        else
 
-constructor TFPPApplication.Create(TheOwner: TComponent);
-begin
-  inherited Create(TheOwner);
+          AddSearchPath(ExtractFilePath(param));
+      end;
+    end;
+  end;
 
-  Environment := TEnvironment.Create;
-end;
+  destructor TEnvironment.Destroy;
+  begin
+    PathList.Free;
+    inherited Destroy;
+  end;
 
-destructor TFPPApplication.Destroy;
-begin
-  inherited Destroy;
-end;
+  function TEnvironment.FileList(ExtensionMask: string): TStrings;
+  var
+    i: integer;
+  begin
+    Result := TStringList.Create;
+    for i := 0 to PathList.Count - 1 do
+      RecursiveFileSearch(PathList[i], ExtensionMask, Result);
+  end;
 
-procedure TFPPApplication.Run;
-begin
-  ShowHelp;
+  procedure TFPPApplication.ShowHelp;
+  begin
+    writeln('GNU FreePascal profiler 0.1');
+    writeln('Copyright 2007 Darius Blaszyk.');
+    writeln('FPP is free software, covered by the GNU General Public License, and you are');
+    writeln('welcome to change it and/or distribute copies of it under certain conditions.');
+    writeln('There is absolutely no warranty for FPP.');
+    writeln;
+  end;
 
-  //insert profiling code
-  InsertProfilingCode;
+  procedure TFPPApplication.Show(msg: string);
+  begin
+    if Verbose then
+      Writeln(msg);
+  end;
 
-  //compile the sources
-  Compile;
+  procedure TFPPApplication.Compile;
+  var
+    FPCProcess: TProcess;
+  begin
+    FPCProcess := TProcess.Create(nil);
 
-  //remove the profiling code
-  RemoveProfilingCode;
-end;
+    FPCProcess.CommandLine := 'fpc ' + Environment.CommandLine;
+
+    writeln('executing: ', FPCProcess.CommandLine);
+    writeln;
+    FPCProcess.Options := FPCProcess.Options + [poWaitOnExit];
+    FPCProcess.Execute;
+
+    FPCProcess.Free;
+  end;
+
+  constructor TFPPApplication.Create(TheOwner: TComponent);
+  begin
+    inherited Create(TheOwner);
+
+    Environment := TEnvironment.Create;
+  end;
+
+  destructor TFPPApplication.Destroy;
+  begin
+    inherited Destroy;
+  end;
+
+  procedure TFPPApplication.Run;
+  begin
+    ShowHelp;
+
+    InsertProfilingCode(Environment.FileList('.pp;.pas;.inc;.lpr'), @ModifyCode);
+
+    RemoveProfilingCode(Environment.FileList('.fpprof'));
+  end;
 
 begin
   Application := TFPPApplication.Create(nil);
   Application.Run;
   Application.Free;
+  readln;
 end.
