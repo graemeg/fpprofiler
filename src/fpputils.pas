@@ -16,25 +16,24 @@ type
     value: string;
   end;
 
-  TPasTokenList = array of TPasToken;
-  
-  TModTokenProc = procedure(tokenlist: TPasTokenList);
+  TModTokenProc = procedure(tokenlist: TFPList);
 
 procedure RecursiveFileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
 procedure InsertProfilingCode(FileList: TStrings; ModTokenProc: TModTokenProc);
 procedure RemoveProfilingCodeFromFile(const FileName: string);
 procedure RemoveProfilingCode(FileList: TStrings);
-procedure ParseSource(FileName: string; var PasTokenList: TPasTokenList);
-procedure SaveTokenList(FileName: string; PasTokenList: TPasTokenList);
+procedure ParseSource(FileName: string; var PasTokenList: TFPList);
+procedure SaveTokenList(FileName: string; PasTokenList: TFPList);
 
 implementation
 
-procedure ParseSource(FileName: string; var PasTokenList: TPasTokenList);
+procedure ParseSource(FileName: string; var PasTokenList: TFPList);
 var
   pas: TPascalScanner;
   fr: TFileResolver;
   index: integer;
   token: TToken;
+  pt: ^TPasToken;
 begin
   fr := TFileResolver.Create;
   pas := TPascalScanner.Create(fr);
@@ -47,11 +46,13 @@ begin
 
     token := pas.FetchToken;
 
-    SetLength(PasTokenList, index);
-    PasTokenList[index-1].token := token;
-    PasTokenList[index-1].value := pas.CurTokenString;
+    New(pt);
+    pt^.token:= token;
+    pt^.value:= pas.CurTokenString;
+    PasTokenList.Add(@pt);
+
     {$ifdef debug}
-    writeln(PasTokenList[index-1].token, '>', PasTokenList[index-1].value);
+    writeln(token, '>', pas.CurTokenString);
     {$endif}
   until pas.CurToken = tkEOF;
 
@@ -59,7 +60,26 @@ begin
   fr.Free;
 end;
 
-procedure SaveTokenList(FileName: string; PasTokenList: TPasTokenList);
+procedure SaveTokenList(FileName: string; PasTokenList: TFPList);
+  //following function is a bit of a hack as
+  //passrc removes double literals (should be fixed there)
+  function InsertLiteral(AString: string): string;
+  var
+    i: Integer;
+  begin
+    i := 1;
+    while i < length(AString) do
+    begin
+      if AString[i] = chr(39) then
+      begin
+        Insert(chr(39), AString, i);
+        Inc(i);
+      end;
+      Inc(i);
+    end;
+    
+    Result := AString;
+  end;
 var
   t: text;
   i: integer;
@@ -67,14 +87,14 @@ begin
   assign(t, FileName);
   rewrite(t);
 
-  for i:=0 to High(PasTokenList) do
+  for i:=0 to PasTokenList.Count do
   begin
-    case PasTokenList[i].token of
+    case TPasToken(PasTokenList[i]^).token of
       tkWhitespace: write(t, ' ');
-      tkString: if PasTokenList[i].value = chr(39) then
-                  write(t, chr(39), chr(39), chr(39), chr(39))
+      tkString: if TPasToken(PasTokenList[i]^).value = chr(39) then
+                  write(t, chr(39) + chr(39) + chr(39) + chr(39) + chr(39))
                 else
-                  write(t, chr(39), PasTokenList[i].value, chr(39));
+                  write(t, chr(39) + InsertLiteral(TPasToken(PasTokenList[i]^).value) + chr(39));
       tkBraceOpen: write(t, '(');
       tkBraceClose: write(t, ')');
       tkMul: write(t, '*');
@@ -101,11 +121,11 @@ begin
       tkSymmetricalDifference: write(t, '><');
       tkLineEnding: writeln(t, LineEnding);
       tkTab: writeln(t, #9);
-      tkDirective, tkDefine, tkInclude: write(t, '{', PasTokenList[i].value, '}')
+      tkDirective, tkDefine, tkInclude: write(t, '{', TPasToken(PasTokenList[i]^).value, '}')
     else
       //remove comments from source
-      if PasTokenList[i].token <> tkComment then
-        write(t, PasTokenList[i].value);
+      if TPasToken(PasTokenList[i]^).token <> tkComment then
+        write(t, TPasToken(PasTokenList[i]^).value);
     end;
   end;
 
@@ -139,10 +159,12 @@ end;
 procedure InsertProfilingCode(FileList: TStrings; ModTokenProc: TModTokenProc);
 var
   i: integer;
-  PasTokenList: TPasTokenList;
+  PasTokenList: TFPList;
   IgnoreFile: Text;
   Success: boolean;
 begin
+  PasTokenList := TFPList.Create;
+  
   assign(IgnoreFile, 'ignorelist.dat');
   rewrite(IgnoreFile);
   //make a copy of the original files and process them
@@ -167,8 +189,11 @@ begin
       writeln(' .......... FAIL');
       writeln(IgnoreFile, FileList[i]);
     end;
+    
+    PasTokenList.Clear;
   end;
   close(IgnoreFile);
+  PasTokenList.Free;
 end;
 
 procedure RemoveProfilingCodeFromFile(const FileName: string);
