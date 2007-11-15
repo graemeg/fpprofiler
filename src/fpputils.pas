@@ -87,7 +87,7 @@ begin
   assign(t, FileName);
   rewrite(t);
 
-  for i:=0 to PasTokenList.Count do
+  for i:=0 to PasTokenList.Count - 1 do
   begin
     case TPasToken(PasTokenList[i]^).token of
       tkWhitespace: write(t, ' ');
