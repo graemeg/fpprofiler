@@ -3,7 +3,7 @@ program fppview;
 {$mode objfpc}{$H+}
 
 uses
-  strings, contnrs, FPPLogReader, FPPStats;
+  strings, contnrs, FPPLogReader, FPPStats, FPPReport;
 
 var
   FPPReader: TFPPLogReader;
@@ -11,7 +11,8 @@ var
 begin
   FPPReader := TFPPLogReader.Create(ParamStr(1));
 
-  ProfStats := TCallingListProfStats.Create(FPPReader);
+  ProfStats := TCallingListProfStats.Create(FPPReader, rtPlain);
+  ProfStats.Run;
 
   readln;
   FPPReader.Free;
