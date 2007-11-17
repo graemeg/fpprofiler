@@ -72,7 +72,7 @@ procedure fpprof_initializeoutput;
 var
   fpprof_filename: string;
 begin
-  fpprof_filename := Paramstr(0) + '.fpprof';
+  fpprof_filename := ChangeFileExt(ExpandFileName(Paramstr(0)), '.fpprof');
 
   New(fpprof_text);
 

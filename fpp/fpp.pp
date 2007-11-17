@@ -3,7 +3,7 @@ program fpp;
 {$mode objfpc}
 
 uses
-  Classes, Process, CustApp, SysUtils, fpputils, PScanner;
+  Classes, Process, CustApp, SysUtils, fpputils, PScanner, Dos;
 
 type
 
@@ -57,6 +57,7 @@ var
   procedure ModifyCode(tokenlist: TFPList);
   var
     i: integer;
+    begin_count: integer;
 
     procedure InsertFPProfUnit;
     var
@@ -91,6 +92,7 @@ var
 
   //insert function fpprof_info after each tkBegin and before each tkEnd
     i := 0;
+    begin_count := 0;
     while i < tokenlist.Count do
     begin
       case TPasToken(tokenlist[i]^).token of
@@ -98,18 +100,23 @@ var
         begin
           InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof_profile; ');
           Inc(i);
+          Inc(begin_count);
         end;
         tkEnd:
         begin
-          InsertToken(tokenlist, i - 1, tkIdentifier, ' fpprof_profile; ');
-          Inc(i);
+          if begin_count > 0 then
+          begin
+            InsertToken(tokenlist, i - 1, tkIdentifier, ' fpprof_profile; ');
+            Inc(i);
+            Dec(begin_count);
+          end;
         end;
       end;
       Inc(i);
     end;
 
-  //save result for debuging
-    SaveTokenList('test.debug.pp', tokenlist);
+    //save result for debuging
+    //SaveTokenList('test.debug.pp', tokenlist);
   end;
 
   procedure TEnvironment.AddSearchPath(path: string);
@@ -126,18 +133,19 @@ var
     inherited Create;
     PathList := TStringList.Create;
 
-    CommandLine := '';
+    //add debugging info and fpprof unit path
+    CommandLine := '-g -Fu' + getenv('fpprof');;
 
     for i := 1 to ParamCount do
     begin
       CommandLine := CommandLine + ' ' + ParamStr(i);
       param := ParamStr(i);
       case param[1] of
-        '-': if pos('-FU', ParamStr(i)) <> 0 then
+        '-': if pos('-Fu', ParamStr(i)) <> 0 then
             AddSearchPath(copy(ParamStr(i), 4, Length(ParamStr(i)) - 3));
         else
       //filename
-          AddSearchPath(ExtractFilePath(param));
+          AddSearchPath(ExtractFilePath(ExpandFileName(param)));
       end;
     end;
   end;
@@ -208,11 +216,11 @@ var
   begin
     ShowHelp;
 
-  //insert profiling code
+    //insert profiling code
     InsertProfilingCode(Environment.FileList('.pp;.pas;.inc;.lpr'), @ModifyCode);
 
-  //compile the sources
-  //Compile;
+    //compile the sources
+    Compile;
 
     //remove the profiling code
     RemoveProfilingCode(Environment.FileList('.fpprof'));
@@ -222,5 +230,5 @@ begin
   Application := TFPPApplication.Create(nil);
   Application.Run;
   Application.Free;
-  readln;
+  //readln;
 end.

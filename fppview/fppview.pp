@@ -14,7 +14,6 @@ begin
   ProfStats := TCallingListProfStats.Create(FPPReader, rtPlain);
   ProfStats.Run;
 
-  readln;
   FPPReader.Free;
   ProfStats.Free;
 end.
