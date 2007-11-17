@@ -3,7 +3,7 @@ unit FPPReport;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, StrUtils;
 
 type
   TFPPReportType = (rtPlain);

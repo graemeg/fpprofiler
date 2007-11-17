@@ -2,30 +2,30 @@
 
 function TCustomFPPReport.GetCell(ARow, AColumn: integer): string;
 begin
-  if ARow > FRowCount then
+  if ARow >= FRowCount then
     raise Exception.Create('Row index out of range');
-  if AColumn > FColumnCount then
+  if AColumn >= FColumnCount then
     raise Exception.Create('Column index out of range');
 
-  Result := FCells[ARow - 1, AColumn - 1];
+  Result := FCells[ARow, AColumn];
 end;
 
 procedure TCustomFPPReport.SetCell(ARow, AColumn: integer; const AValue: string
   );
 begin
-  if ARow > FRowCount then
+  if ARow >= FRowCount then
   begin
-    FRowCount := ARow;
+    FRowCount := ARow + 1;
     SetLength(FCells, FRowCount, FColumnCount);
   end;
 
-  if AColumn > FColumnCount then
+  if AColumn >= FColumnCount then
   begin
-    FColumnCount := AColumn;
+    FColumnCount := AColumn + 1;
     SetLength(FCells, FRowCount, FColumnCount);
   end;
 
-  FCells[ARow - 1, AColumn - 1] := AValue;
+  FCells[ARow, AColumn] := AValue;
 end;
 
 constructor TCustomFPPReport.Create;

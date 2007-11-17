@@ -49,7 +49,7 @@ type
     constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
     destructor Destroy;
 
-    procedure Run;
+    procedure Run; override;
   end;
 
 
@@ -89,19 +89,19 @@ begin
     raise Exception.Create('No report object created.');
     
   FPPReport.Clear;
-  FPPReport.Cells[1,1] := '#';
-  FPPReport.Cells[1,2] := 'Elapsed msec';
-  FPPReport.Cells[1,3] := 'Function';
-  FPPReport.Cells[1,4] := 'Source';
-  FPPReport.Cells[1,5] := 'Line';
+  FPPReport.Cells[0,0] := '#';
+  FPPReport.Cells[0,1] := 'Elapsed msec';
+  FPPReport.Cells[0,2] := 'Function';
+  FPPReport.Cells[0,3] := 'Source';
+  FPPReport.Cells[0,4] := 'Line';
 
   for i := 0 to Pred(FReader.Count) do
   begin
-    FPPReport.Cells[i + 1, 1] :=  IntToStr(i + 1);
-    FPPReport.Cells[i + 1, 2] :=  IntToStr(FReader[i].elapsed);
-    FPPReport.Cells[i + 1, 3] :=  FReader[i].func;
-    FPPReport.Cells[i + 1, 4] :=  FReader[i].source;
-    FPPReport.Cells[i + 1, 5] :=  IntToStr(FReader[i].line);
+    FPPReport.Cells[i + 1, 0] :=  IntToStr(i + 1);
+    FPPReport.Cells[i + 1, 1] :=  IntToStr(FReader[i].elapsed);
+    FPPReport.Cells[i + 1, 2] :=  FReader[i].func;
+    FPPReport.Cells[i + 1, 3] :=  FReader[i].source;
+    FPPReport.Cells[i + 1, 4] :=  IntToStr(FReader[i].line);
   end;
 
   FPPReport.WriteTable;
