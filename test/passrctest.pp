@@ -1,17 +1,5 @@
 program passrctest;
 
-{
-ignorefiles:
-  (REPORTED)
-  packages\extra\gtk\conv\fixgdk.pp
-  packages\extra\gtk\conv\fixgdkcdecl.pp
-  packages\extra\gtk\conv\fixgtk.pp
-  packages\extra\gtk\conv\fixgtkcdecl.pp
-  
-  (SKIP BECAUSE OF THE SHEAR SIZE)
-  packages\extra\univint\FPCMacOSAll.pas
-}
-
 {$mode objfpc}
 { $define debug}
 
