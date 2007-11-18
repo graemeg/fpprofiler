@@ -49,7 +49,7 @@
       <Filename Value=".\test"/>
     </Target>
     <SearchPaths>
-      <OtherUnitFiles Value="..\src\"/>
+      <OtherUnitFiles Value="..\fpprof\"/>
       <UnitOutputDirectory Value="units\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

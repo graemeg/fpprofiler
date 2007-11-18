@@ -27,39 +27,36 @@ implementation
 var
   fpprof_text: ^Text = nil;
   fpprof_allocated: boolean;
+  fpprof_starttime: QWord;
   
+{ The following includes define platform/architecture specific
+implementations to get accurate system times. The function is defined as:
+
+  function fpprof_getsystemtime: QWord;
+}
+
+{$IFDEF WIN32}
+  {$i win32systemtime.inc}
+{$ELSE}
+  {$i systemtime.inc}
+{$ENDIF}
+
 function fpprof_info(frame_pointer: pointer): string;
 var
-  caller_addr : Pointer;
-  SystemTime: TSystemTime;
-  sYear : string;
-  sMonth : string;
-  sDay : string;
-  sHour : string;
-  sMinute : string;
-  sSecond : string;
-  sMilliseconds : string;
+  caller_addr: Pointer;
   func: string;
   source: string;
   line: longint;
   sline: string;
+  SystemTime : string;
 begin
-  GetLocalTime(SystemTime);
-  str(SystemTime.Year, sYear);
-  str(SystemTime.Month, sMonth);
-  str(SystemTime.Day, sDay);
-  str(SystemTime.Hour, sHour);
-  str(SystemTime.Minute, sMinute);
-  str(SystemTime.Second, sSecond);
-  str(SystemTime.Millisecond, sMilliseconds);
+  str(fpprof_getsystemtime - fpprof_starttime, SystemTime);
 
   caller_addr := get_caller_addr(frame_pointer);
   GetLineInfo(ptruint(caller_addr), func, source, line);
   str(line, sline);
 
-  fpprof_info := sYear + ' ' + sMonth + ' ' + sDay + ' ' + sHour + ' ' +
-                 sMinute + ' ' + sSecond + ' ' + sMilliseconds + ' ' +
-                 func + ' ' + source + ' ' + sline;
+  fpprof_info := SystemTime + ' ' + func + ' ' + source + ' ' + sline;
 end;
 
 procedure fpprof_profile;
@@ -68,7 +65,7 @@ begin
   writeln(fpprof_text^, fpprof_info(get_frame));
 end;
 
-procedure fpprof_initializeoutput;
+procedure fpprof_initialize;
 var
   fpprof_filename: string;
 begin
@@ -97,9 +94,11 @@ begin
     fpprof_allocated := false;
   end else
     fpprof_allocated := true;
+    
+  fpprof_starttime := fpprof_getsystemtime;
 end;
 
-procedure fpprof_finalizeoutput;
+procedure fpprof_finalize;
 begin
   if fpprof_allocated then
   begin
@@ -110,10 +109,10 @@ begin
 end;
 
 initialization
-  fpprof_initializeoutput;
+  fpprof_initialize;
 
 finalization
-  fpprof_finalizeoutput;
+  fpprof_finalize;
   
 end.
 

@@ -2,14 +2,18 @@ program passrcex;
 
 {$mode objfpc}
 
-uses fpputils;
+uses
+  Classes, fpputils;
 
 var
-  PasTokenList: TPasTokenList;
+  PasTokenList: TFPList;
   
 begin
+  PasTokenList := TFPList.Create;
+  
   ParseSource(ParamStr(1), PasTokenList);
   SaveTokenList(ParamStr(1) + '.out', PasTokenList);
   writeln('info: done.');
+  PasTokenList.Free;
   readln;
 end.

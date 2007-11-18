@@ -20,7 +20,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="lnfodwrf.pp"/>
+        <CommandLineParams Value="rtlconst.inc"/>
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
@@ -49,7 +49,7 @@
       <Filename Value=".\passrcex"/>
     </Target>
     <SearchPaths>
-      <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\src\"/>
+      <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\fpprof\"/>
       <UnitOutputDirectory Value="units\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

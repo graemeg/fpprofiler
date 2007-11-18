@@ -43,34 +43,11 @@ implementation
 { TFPPLogReader }
 
 procedure TFPPLogReader.ReadLine(ALine: string);
-var
-  DateTime: TDateTime;
-  year: word;
-  month: word;
-  day: word;
-  hour: word;
-  minute: word;
-  second: word;
-  msec: word;
 begin
-  year := StrToInt(ExtractDelimited(1, ALine, [' ']));
-  month := StrToInt(ExtractDelimited(2, ALine, [' ']));
-  day := StrToInt(ExtractDelimited(3, ALine, [' ']));
-
-  hour := StrToInt(ExtractDelimited(4, ALine, [' ']));
-  minute := StrToInt(ExtractDelimited(5, ALine, [' ']));
-  second := StrToInt(ExtractDelimited(6, ALine, [' ']));
-  msec := StrToInt(ExtractDelimited(7, ALine, [' ']));
-
-  DateTime := EncodeDate(year, month, day) + EncodeTime(hour, minute, second, msec);
-  
-  if FCount = 0 then
-    StartDateTime := DateTime;
-    
-  AddData(Round((DateTime - StartDateTime) * 24 * 3600 * 1000),
-                ExtractDelimited(8, ALine, [' ']),
-                ExtractDelimited(9, ALine, [' ']),
-                StrToInt(ExtractDelimited(10, ALine, [' '])));
+  AddData(StrToInt(ExtractDelimited(1, ALine, [' '])),
+          ExtractDelimited(2, ALine, [' ']),
+          ExtractDelimited(3, ALine, [' ']),
+          StrToInt(ExtractDelimited(4, ALine, [' '])));
 end;
 
 function TFPPLogReader.GetData(Index: Integer): TFPPEntry;
