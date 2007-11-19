@@ -3,10 +3,10 @@ unit FPPReport;
 interface
 
 uses
-  Classes, SysUtils, StrUtils;
+  Classes, SysUtils, StrUtils, FPCallGraph;
 
 type
-  TFPPReportType = (rtPlain);
+  TFPPReportType = (rtPlain, rtGraphViz);
   { TCustomFPPReport }
 
   TCustomFPPReport = class(TObject)
@@ -24,6 +24,7 @@ type
     
     procedure Clear;
     procedure WriteTable; virtual; abstract;
+    procedure CallGraph(CallGraph: TFPCallGraph); virtual; abstract;
 
     property Cells[ARow, AColumn: integer]: string read GetCell write SetCell;
   end;
@@ -40,9 +41,23 @@ type
     procedure WriteTable; override;
   end;
 
+  { TGraphVizReport }
+
+  TGraphVizReport = class(TCustomFPPReport)
+  private
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure WriteTable;
+    procedure CallGraph(ACallGraph: TFPCallGraph); override;
+  end;
+
 implementation
 
 {$i customreport.inc}
 {$i plainreport.inc}
+{$i graphvizreport.inc}
 
 end.

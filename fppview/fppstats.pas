@@ -5,7 +5,7 @@ unit FPPStats;
 interface
 
 uses
-  Classes, SysUtils, FPPLogReader, FPPReport;
+  Classes, SysUtils, FPPLogReader, FPPReport, FPCallGraph;
 
 type
 
@@ -21,11 +21,11 @@ type
     FPPReport: TCustomFPPReport;
 
   public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); virtual; abstract;
-    destructor Destroy; virtual; abstract;
+    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); virtual;
+    destructor Destroy; virtual;
     
     property Report: TFPPReportType read FReport write SetReport;
-    procedure Run; virtual; abstract;
+    procedure Run; virtual;
   end;
 
   { TCallingListProfStats }
@@ -34,7 +34,7 @@ type
   private
 
   public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
+    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
     destructor Destroy;
 
     procedure Run; override;
@@ -46,12 +46,23 @@ type
   private
 
   public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
+    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
     destructor Destroy;
 
     procedure Run; override;
   end;
 
+  { TCallGraphStats }
+
+  TCallGraphStats = class(TCustomProfStats)
+  private
+
+  public
+    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
+    destructor Destroy;
+
+    procedure Run; override;
+  end;
 
 implementation
 
@@ -63,17 +74,35 @@ begin
   FReport:=AValue;
   case FReport of
     rtPlain: FPPReport := TPlainReport.Create;
+    rtGraphViz: FPPReport := TGraphVizReport.Create;
   else
     FPPReport := TPlainReport.Create;
   end;
+end;
+
+constructor TCustomProfStats.Create(AReader: TFPPLogReader;
+  const AValue: TFPPReportType);
+begin
+  FReader := AReader;
+  SetReport(AValue);
+end;
+
+destructor TCustomProfStats.Destroy;
+begin
+
+end;
+
+procedure TCustomProfStats.Run;
+begin
+  if not Assigned(FPPReport) then
+    raise Exception.Create('No report object created.');
 end;
 
 { TCallingListProfStats }
 
 constructor TCallingListProfStats.Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
 begin
-  FReader := AReader;
-  SetReport(AValue);
+  inherited Create(AReader, AValue);
 end;
 
 destructor TCallingListProfStats.Destroy;
@@ -85,8 +114,7 @@ procedure TCallingListProfStats.Run;
 var
   i: integer;
 begin
-  if not Assigned(FPPReport) then
-    raise Exception.Create('No report object created.');
+  inherited Run;
     
   FPPReport.Clear;
   FPPReport.Cells[0,0] := '#';
@@ -111,7 +139,7 @@ end;
 
 constructor TFlatProfStats.Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
 begin
-
+  inherited Create(AReader, AValue);
 end;
 
 destructor TFlatProfStats.Destroy;
@@ -121,7 +149,40 @@ end;
 
 procedure TFlatProfStats.Run;
 begin
+  inherited Run;
+end;
 
+{ TCallGraphStats }
+
+constructor TCallGraphStats.Create(AReader: TFPPLogReader;
+  const AValue: TFPPReportType);
+begin
+  inherited Create(AReader, AValue);
+end;
+
+destructor TCallGraphStats.Destroy;
+begin
+
+end;
+
+procedure TCallGraphStats.Run;
+var
+  FPCallGraph: TFPCallGraph;
+  i: integer;
+begin
+  inherited Run;
+
+  FPCallGraph := TFPCallGraph.Create;
+  
+  //this needs to be fixed, until now not the right
+  //caller and callee are passed to CallGraph, but
+  //we need to start somewhere don't we?
+  for i := 0 to FReader.Count - 2 do
+    FPCallGraph.AddCall(FReader[i].func, FReader[i+1].func);
+
+  FPPReport.CallGraph(FPCallGraph);
+
+  FPCallGraph.Free;
 end;
 
 end.
