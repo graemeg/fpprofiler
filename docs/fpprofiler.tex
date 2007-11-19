@@ -61,7 +61,7 @@
 
 \chapter{Introduction}
 The \fpp is an effort to create an FPC native profiler, deployable on all platforms and
-architectures the Free Pascal compiler supports.
+architectures the Free Pascal compiler itself supports.
 
 \section{About this document}
 This is the user manual for \fpp. It describes the
@@ -77,12 +77,56 @@ site \fpprofilerwebsite.
 The sources for \fpp are available from SVN here: \url{http://svn.freepascal.org/svn/fpcprojects/fpprofiler/}.
 
 \section{Introduction to profiling}
+Profiling is a analysis technique that gives information about how many times a 
+function is called and how long each call took. This information is usefull in 
+making your application less time critical and more efficient.
+It allows you to monitor so called ''hotspots'' in your code and to address them.
+And in turn test your new code to see wether or not it improves performance.
+
+\chapter{Free Pascal Profiler}
+
+This chapter describes the structure of the Free Pascal Profiler. Which conists of two 
+tools (fpp and fppview) and some units that contain the profiling code that needs to
+be linked in. The next sections will describe them more in detail.
+
+\section{fprof}
+
+\section{fpp}
+
+\section{fppview}
+
+\subsection{fppreport}
+FPPReport defines the main class TCustomFPPReport whichs has several descendants that 
+output in different formats. Currently supported formats are:
+
+\begin{description}
+	\item[Plain] Results are written to the console terminal in human readable format. Tables 
+	are nicely formatted.
+	\item[GraphViz] Graphviz is open source graph visualization software. Graph visualization 
+	is a way of representing structural information as diagrams of abstract graphs and networks. 
+	Not all statistics support this format.
+	\item[Latex] To be implemented.
+\end{description}
+
+\subsection{fppstats}
 
 \chapter{Compiling a program for profiling}
+Profiling your application requires the insertion of profiling code before compilation. 
+To automate the insertion of profiling code the Free Pascal Profile Compiler (FPP) has 
+been created. This application takes the same commandline parameters as the Free Pascal Compiler
+(FPC) but instead works as a preprocessor and first inserts the required code on the correct places, 
+then compiles the application by calling FPC and finally restores the code back to it's original. A more detailed overview of 
+what happens is shown in figure x.
 
 \chapter{Executing the program}
 
 \chapter{Analyzing the profiling log}
+
+\subsection{Flat profile}
+
+\subsection{Call graph}
+
+
 
 \section{Interpreting the statistics}
 
