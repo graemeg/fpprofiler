@@ -21,7 +21,7 @@ var
   j: integer;
 begin
   writeln('# example compilation of dot script');
-  writeln('# dot -Tjpg test.dot -o test.jpg');
+  writeln('# dot -Tpng test.dot -o test.png');
 
   writeln('digraph G {');
 

@@ -162,7 +162,7 @@ var
   begin
     Result := TStringList.Create;
     for i := 0 to PathList.Count - 1 do
-      RecursiveFileSearch(PathList[i], ExtensionMask, Result);
+      FileSearch(PathList[i], ExtensionMask, Result);
   end;
 
 { TFPPApplication }

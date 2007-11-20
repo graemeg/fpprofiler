@@ -39,7 +39,7 @@
       <Filename Value=".\fpp"/>
     </Target>
     <SearchPaths>
-      <OtherUnitFiles Value="..\fcl-passrc\;..\src\"/>
+      <OtherUnitFiles Value="..\fcl-passrc\;..\fpprof\"/>
       <UnitOutputDirectory Value="units\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

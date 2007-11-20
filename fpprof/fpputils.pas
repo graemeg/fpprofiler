@@ -18,6 +18,7 @@ type
 
   TModTokenProc = procedure(tokenlist: TFPList);
 
+procedure FileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
 procedure RecursiveFileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
 procedure InsertProfilingCode(FileList: TStrings; ModTokenProc: TModTokenProc);
 procedure RemoveProfilingCodeFromFile(const FileName: string);
@@ -67,17 +68,17 @@ procedure SaveTokenList(FileName: string; PasTokenList: TFPList);
   var
     i: Integer;
   begin
-    i := 1;
-    while i < length(AString) do
-    begin
-      if AString[i] = chr(39) then
-      begin
-        Insert(chr(39), AString, i);
-        Inc(i);
-      end;
-      Inc(i);
-    end;
-    
+    //i := 1;
+    //while i < length(AString) do
+    //begin
+      //if AString[i] = chr(39) then
+      //begin
+        //Insert(chr(39), AString, i);
+        //Inc(i);
+      //end;
+      //Inc(i);
+    //end;
+
     Result := AString;
   end;
 var
@@ -130,6 +131,27 @@ begin
   end;
 
   close(t);
+end;
+
+procedure FileSearch(SearchDir: string; ExtensionMask: string;
+  var FileList: TStrings);
+var
+  Info : TSearchRec;
+  ExtensionList: TStrings;
+begin
+  SearchDir := IncludeTrailingPathDelimiter(SearchDir);
+
+  ExtensionList := TStringList.Create;
+  ExtensionList.Delimiter := ';';
+  ExtensionList.DelimitedText := ExtensionMask;
+
+  if FindFirst(SearchDir+'*',faAnyFile and faDirectory,Info)=0 then
+    repeat
+      if ExtensionList.IndexOf(ExtractFileExt(Info.Name)) <> -1 then
+        FileList.Add(SearchDir + Info.Name);
+    until FindNext(Info)<>0;
+
+  FindClose(Info);
 end;
 
 procedure RecursiveFileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
