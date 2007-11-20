@@ -26,15 +26,16 @@ begin
   writeln('digraph G {');
 
   //definition of nodes
-  for i := 0 to ACallGraph.Count - 1 do
-    writeln('  ', ACallGraph[i].Name, ';');
+  for i := 0 to ACallGraph.Caller.Count - 1 do
+    writeln('  ', ACallGraph.Caller[i], ';');
 
   writeln;
 
   //definition of connections
-  for i := 0 to ACallGraph.Count - 1 do
-    for j := 0 to ACallGraph[i].Count - 1 do
-      writeln('  ', ACallGraph[i].Name, ' -> ', ACallGraph[i][j].Name, ' [label="' , ACallGraph[i][j].Count, ' calls"];');
+  for i := 0 to ACallGraph.Caller.Count - 1 do
+    for j := 0 to ACallGraph.Caller.Count - 1 do
+      if ACallGraph.Called[i,j] <> 0 then
+        writeln('  ', ACallGraph.Caller[i], ' -> ', ACallGraph.Caller[j], ' [label="' , ACallGraph.Called[i,j], ' calls"];');
 
   writeln('}');
 end;
