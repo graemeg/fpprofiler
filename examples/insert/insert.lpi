@@ -38,7 +38,7 @@
       <Filename Value=".\insert"/>
     </Target>
     <SearchPaths>
-      <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\"/>
+      <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\fpprof\"/>
       <UnitOutputDirectory Value="units\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

@@ -1,7 +1,7 @@
 program revert;
 
 uses
-  fpputils, Classes, dos, Process, SysUtils;
+  fpputils, Classes, dos, SysUtils;
 
 var
   FileList: TStrings;
