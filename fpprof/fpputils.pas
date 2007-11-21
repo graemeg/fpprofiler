@@ -54,7 +54,7 @@ begin
     PasTokenList.Add(pt);
 
     {$ifdef debug}
-    writeln(token, '>', pas.CurTokenString);
+    //writeln(token, '>', pas.CurTokenString);
     {$endif}
   until pas.CurToken = tkEOF;
 
@@ -63,25 +63,6 @@ begin
 end;
 
 procedure SaveTokenList(FileName: string; PasTokenList: TFPList);
-  //following function is a bit of a hack as
-  //passrc removes double literals (should be fixed there)
-  function InsertLiteral(AString: string): string;
-  var
-    i: Integer;
-  begin
-    //i := 1;
-    //while i < length(AString) do
-    //begin
-      //if AString[i] = chr(39) then
-      //begin
-        //Insert(chr(39), AString, i);
-        //Inc(i);
-      //end;
-      //Inc(i);
-    //end;
-
-    Result := AString;
-  end;
 var
   t: text;
   i: integer;
@@ -93,10 +74,7 @@ begin
   begin
     case TPasToken(PasTokenList[i]^).token of
       tkWhitespace: write(t, ' ');
-      tkString: if TPasToken(PasTokenList[i]^).value = chr(39) then
-                  write(t, chr(39) + chr(39) + chr(39) + chr(39) + chr(39))
-                else
-                  write(t, chr(39) + InsertLiteral(TPasToken(PasTokenList[i]^).value) + chr(39));
+      tkString: write(t, chr(39) + TPasToken(PasTokenList[i]^).value + chr(39));
       tkBraceOpen: write(t, '(');
       tkBraceClose: write(t, ')');
       tkMul: write(t, '*');

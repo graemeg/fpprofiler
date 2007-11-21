@@ -1,7 +1,7 @@
-    StartPackage('fpp');
+    StartPackage('test');
 
     {$IF defined(ALLPACKAGES)}
-      Directory:='fpp';
+      Directory:='test';
       BaseInstallDir := '.';
     {$ELSE}
       BaseInstallDir := '..';
@@ -14,7 +14,7 @@
     Description := 'this package is part of the fpprofiler project';
     Version := '0.1.0';
 
-    T:=Targets.AddProgram('fpp');
+    T:=Targets.AddProgram('passrctest');
     T.Mode := cmObjFPC;
     T.UnitPath.Add('..\fcl-passrc\');
     T.UnitPath.Add('..\fpprof\');
