@@ -39,6 +39,7 @@ type
     destructor Destroy; override;
 
     procedure WriteTable; override;
+    procedure CallGraph(ACallGraph: TFPCallGraph); override;
   end;
 
   { TGraphVizReport }
@@ -50,7 +51,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure WriteTable;
+    procedure WriteTable; override;
     procedure CallGraph(ACallGraph: TFPCallGraph); override;
   end;
 

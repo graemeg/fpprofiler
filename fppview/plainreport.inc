@@ -43,3 +43,8 @@ begin
   end;
 end;
 
+procedure TPlainReport.CallGraph(ACallGraph: TFPCallGraph);
+begin
+
+end;
+

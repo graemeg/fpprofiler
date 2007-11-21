@@ -22,7 +22,7 @@ type
 
   public
     constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); virtual;
-    destructor Destroy; virtual;
+    destructor Destroy; override;
     
     property Report: TFPPReportType read FReport write SetReport;
     procedure Run; virtual;
@@ -35,7 +35,7 @@ type
 
   public
     constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
-    destructor Destroy;
+    destructor Destroy; override;
 
     procedure Run; override;
   end;
@@ -47,7 +47,7 @@ type
 
   public
     constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
-    destructor Destroy;
+    destructor Destroy; override;
 
     procedure Run; override;
   end;
@@ -59,7 +59,7 @@ type
 
   public
     constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
-    destructor Destroy;
+    destructor Destroy; override;
 
     procedure Run; override;
   end;
@@ -89,7 +89,7 @@ end;
 
 destructor TCustomProfStats.Destroy;
 begin
-
+  inherited Destroy;
 end;
 
 procedure TCustomProfStats.Run;
@@ -107,7 +107,7 @@ end;
 
 destructor TCallingListProfStats.Destroy;
 begin
-
+  inherited Destroy;
 end;
 
 procedure TCallingListProfStats.Run;
@@ -144,7 +144,7 @@ end;
 
 destructor TFlatProfStats.Destroy;
 begin
-
+  inherited Destroy;
 end;
 
 procedure TFlatProfStats.Run;
@@ -162,7 +162,7 @@ end;
 
 destructor TCallGraphStats.Destroy;
 begin
-
+  inherited Destroy;
 end;
 
 procedure TCallGraphStats.Run;

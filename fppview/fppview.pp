@@ -21,5 +21,4 @@ begin
 
 
   FPPReader.Free;
-  readln;
 end.

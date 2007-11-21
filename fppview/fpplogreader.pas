@@ -8,7 +8,9 @@ uses
   Classes, SysUtils, StrUtils;
 
 type
+  TPosition = (poEntry, poExit);
   TFPPEntry = record
+    position: TPosition;
     elapsed: longint;    //msec since first frame was created
     func: string;        //function - procedure name that made the call
     source: string;      //sourcefile where procedure is located
@@ -22,8 +24,7 @@ type
   TFPPLogReader = class(TObject)
   private
     FCount: integer;
-    StartDateTime: TDateTime;
-    
+
     FData: TFPPEntryArray;
 
     function GetData(Index: Integer): TFPPEntry;
@@ -33,7 +34,7 @@ type
     constructor Create(const FileName: string);
     destructor Destroy; override;
 
-    procedure AddData(elapsed: longint; func: string; source: string; line: integer);
+    procedure AddData(position: string; elapsed: longint; func: string; source: string; line: integer);
     property Count: integer read FCount;
     property Data[Index: Integer]: TFPPEntry read GetData write SetData; default;
   end;
@@ -44,10 +45,11 @@ implementation
 
 procedure TFPPLogReader.ReadLine(ALine: string);
 begin
-  AddData(StrToInt(ExtractDelimited(1, ALine, [' '])),
-          ExtractDelimited(2, ALine, [' ']),
+  AddData(ExtractDelimited(1, ALine, [' ']),
+          StrToInt(ExtractDelimited(2, ALine, [' '])),
           ExtractDelimited(3, ALine, [' ']),
-          StrToInt(ExtractDelimited(4, ALine, [' '])));
+          ExtractDelimited(4, ALine, [' ']),
+          StrToInt(ExtractDelimited(5, ALine, [' '])));
 end;
 
 function TFPPLogReader.GetData(Index: Integer): TFPPEntry;
@@ -83,10 +85,15 @@ begin
   inherited Destroy;
 end;
 
-procedure TFPPLogReader.AddData(elapsed: longint; func: string; source: string; line: integer);
+procedure TFPPLogReader.AddData(position: string; elapsed: longint; func: string; source: string; line: integer);
 begin
   Inc(FCount);
   SetLength(FData, FCount);
+
+  if position = 'entry' then
+    FData[Pred(FCount)].position := poEntry
+  else
+    FData[Pred(FCount)].position := poExit;
 
   FData[Pred(FCount)].elapsed := elapsed;
   FData[Pred(FCount)].func := func;
