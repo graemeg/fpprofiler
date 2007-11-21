@@ -14,7 +14,7 @@
     Description := 'this package is part of the fpprofiler project';
     Version := '0.1.0';
 
-    T := Targets.AddImplicitUnit('pscanner.pp', False);
+    T := Targets.AddUnit('pscanner.pp');
     {$IF defined(ALLPACKAGES)}
       T.Directory := '..\..\fcl-passrc\';
     {$ELSE}
