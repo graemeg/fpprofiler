@@ -33,13 +33,13 @@ type
     procedure ShowHelp;
     procedure Show(msg: string);
     procedure Compile;
+    procedure Usage;
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
 
     procedure Run;
   end;
-
 
 var
   Application: TFPPApplication;
@@ -96,6 +96,7 @@ var
     while i < tokenlist.Count do
     begin
       case TPasToken(tokenlist[i]^).token of
+        tkCase: Inc(begin_count);
         tkBegin:
         begin
           Inc(begin_count);
@@ -188,6 +189,34 @@ var
       Writeln(msg);
   end;
 
+  procedure TFPPApplication.Usage;
+
+    procedure ShowOption(const C,LC,Msg : String);
+    begin
+      writeln(Format(' -%s --%-20s %s',[C,LC,MSG]));
+    end;
+
+    procedure ShowArgOption(const C,LC,Msg : String); overload;
+    begin
+      writeln(Format(' -%s --%-20s %s',[C,LC+'='+'Value',MSG]));
+    end;
+
+    procedure ShowArgOption(const C,LC, Value, Msg : String); overload;
+    begin
+      writeln(Format(' -%s --%-20s %s',[C, LC+'='+Value, MSG]));
+    end;
+
+  begin
+    writeln(Format('Usage: %s filename [options]',[Paramstr(0)]));
+    writeln;
+    writeln('Where options is one or more of the following:');
+    ShowOption('h','help','This screen.');
+    ShowArgOption('i','no-insert','Do not insert profiling code.');
+    ShowArgOption('r','no-remove','Do not remove profiling code.');
+    writeln;
+    halt;
+  end;
+
   procedure TFPPApplication.Compile;
   var
     FPCProcess: TProcess;
@@ -221,14 +250,19 @@ var
   begin
     ShowHelp;
 
+    if HasOption('h','help') then
+      Usage;
+
     //insert profiling code
-    InsertProfilingCode(Environment.FileList('.pp;.pas;.inc;.lpr'), @ModifyCode);
+    if not HasOption('i','no-insert') then
+      InsertProfilingCode(Environment.FileList('.pp;.pas;.inc;.lpr'), @ModifyCode);
 
     //compile the sources
     Compile;
 
     //remove the profiling code
-    RemoveProfilingCode(Environment.FileList('.fpprof'));
+    if not HasOption('r','no-remove') then
+      RemoveProfilingCode(Environment.FileList('.fpprof'));
   end;
 
 begin

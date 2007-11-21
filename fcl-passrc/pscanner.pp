@@ -529,6 +529,7 @@ var
   OldLength, SectionLength, NestingLevel, Index: Integer;
   Directive, Param: string;
   IncludeStackItem: TIncludeStackItem;
+  IsString: boolean;
 begin
   if TokenStr = nil then
     if not FetchLine then
@@ -635,34 +636,31 @@ begin
         TokenStart := TokenStr;
         OldLength := 0;
         FCurTokenString := '';
+        IsString := True;
 
-        while true do
-        begin
-          if TokenStr[0] = '''' then
-            if TokenStr[1] = '''' then
-            begin
-              SectionLength := TokenStr - TokenStart + 1;
-              SetLength(FCurTokenString, OldLength + SectionLength);
-              if SectionLength > 0 then
-                Move(TokenStart^, FCurTokenString[OldLength + 1], SectionLength);
-              Inc(OldLength, SectionLength);
-              Inc(TokenStr);
-              TokenStart := TokenStr+1;
-            end else
-              break;
-
-          if TokenStr[0] = #0 then
-            Error(SErrOpenString);
+        repeat
+          while TokenStr[0] <> '''' do
+            Inc(TokenStr);
 
           Inc(TokenStr);
-        end;
+          IsString := not IsString;
+          
+          while TokenStr[0] = '''' do
+          begin
+            Inc(TokenStr);
+            IsString := not IsString;
+          end;
 
-        SectionLength := TokenStr - TokenStart;
+        until (not IsString) or (TokenStr[0] = #0);
+
+        if TokenStr[0] = #0 then
+          Error(SErrOpenString);
+
+        SectionLength := TokenStr - TokenStart - 1;
         SetLength(FCurTokenString, OldLength + SectionLength);
         if SectionLength > 0 then
           Move(TokenStart^, FCurTokenString[OldLength + 1], SectionLength);
 
-        Inc(TokenStr);
         Result := tkString;
       end;
     '(':
