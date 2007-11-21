@@ -10,7 +10,7 @@ var
 procedure GetTrace;
   procedure test;
   begin
-    writeln('test');
+    writeln('test ''s'' ');
 
     for i := 0 to 10000000 do
     begin
@@ -31,6 +31,10 @@ begin
 
   for i := 0 to 10000000 do
   begin
+    case i of
+      1: writeln('test');
+      2: writeln('TEST');
+    end;
     inc(j);
   end;
 
