@@ -1,5 +1,6 @@
 unit fpputils;
 
+{$mode objfpc}
 { $define debug}
 
 interface

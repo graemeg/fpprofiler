@@ -14,9 +14,15 @@
     Description := 'this package is part of the fpprofiler project';
     Version := '0.1.0';
 
-    T:=Targets.AddUnit('fppview');
+    T := Targets.AddProgram('fppview');
     T.Mode := cmObjFPC;
-    T.TargetType := ttProgram;
     T.UnitPath.Add('..\fcl-passrc\');
     T.UnitPath.Add('..\fpprof\');
+
+    Targets.AddImplicitUnit('fpcallgraph', False);
+    Targets.AddImplicitUnit('fpcallgraph', False);
+    Targets.AddImplicitUnit('fpplogreader', False);
+    Targets.AddImplicitUnit('fppreport', False);
+    Targets.AddImplicitUnit('fppstats', False);
+
     EndPackage;
