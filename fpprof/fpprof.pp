@@ -20,7 +20,8 @@ interface
 uses
   SysUtils, lineinfo;
 
-procedure fpprof_profile;
+procedure fpprof_entry_profile;
+procedure fpprof_exit_profile;
 
 implementation
 
@@ -59,10 +60,16 @@ begin
   fpprof_info := SystemTime + ' ' + func + ' ' + source + ' ' + sline;
 end;
 
-procedure fpprof_profile;
+procedure fpprof_entry_profile;
 begin
   if not Assigned(fpprof_text) then exit;
-  writeln(fpprof_text^, fpprof_info(get_frame));
+  writeln(fpprof_text^, 'entry ', fpprof_info(get_frame));
+end;
+
+procedure fpprof_exit_profile;
+begin
+  if not Assigned(fpprof_text) then exit;
+  writeln(fpprof_text^, 'exit ', fpprof_info(get_frame));
 end;
 
 procedure fpprof_initialize;

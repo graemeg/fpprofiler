@@ -98,18 +98,23 @@ var
       case TPasToken(tokenlist[i]^).token of
         tkBegin:
         begin
-          InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof_profile; ');
-          Inc(i);
           Inc(begin_count);
+
+          if begin_count = 1 then
+          begin
+            InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof_entry_profile; ');
+            Inc(i);
+          end;
         end;
         tkEnd:
         begin
-          if begin_count > 0 then
+          if begin_count = 1 then
           begin
-            InsertToken(tokenlist, i - 1, tkIdentifier, ' fpprof_profile; ');
+            InsertToken(tokenlist, i - 1, tkIdentifier, ' fpprof_exit_profile; ');
             Inc(i);
-            Dec(begin_count);
           end;
+          if begin_count > 0 then
+            Dec(begin_count);
         end;
       end;
       Inc(i);
@@ -230,5 +235,4 @@ begin
   Application := TFPPApplication.Create(nil);
   Application.Run;
   Application.Free;
-  //readln;
 end.
