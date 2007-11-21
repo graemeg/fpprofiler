@@ -28,18 +28,6 @@ type
     procedure Run; virtual;
   end;
 
-  { TCallingListProfStats }
-
-  TCallingListProfStats = class(TCustomProfStats)
-  private
-
-  public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
-    destructor Destroy; override;
-
-    procedure Run; override;
-  end;
-
   { TFlatProfStats }
 
   TFlatProfStats = class(TCustomProfStats)
@@ -98,19 +86,19 @@ begin
     raise Exception.Create('No report object created.');
 end;
 
-{ TCallingListProfStats }
+{ TFlatProfStats }
 
-constructor TCallingListProfStats.Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
+constructor TFlatProfStats.Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
 begin
   inherited Create(AReader, AValue);
 end;
 
-destructor TCallingListProfStats.Destroy;
+destructor TFlatProfStats.Destroy;
 begin
   inherited Destroy;
 end;
 
-procedure TCallingListProfStats.Run;
+procedure TFlatProfStats.Run;
 var
   i: integer;
 begin
@@ -133,23 +121,6 @@ begin
   end;
 
   FPPReport.WriteTable;
-end;
-
-{ TFlatProfStats }
-
-constructor TFlatProfStats.Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
-begin
-  inherited Create(AReader, AValue);
-end;
-
-destructor TFlatProfStats.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TFlatProfStats.Run;
-begin
-  inherited Run;
 end;
 
 { TCallGraphStats }
