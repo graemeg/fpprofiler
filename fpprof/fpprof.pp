@@ -1,5 +1,4 @@
 {
-
     This file is part of the Free Pascal Profiler.
     Copyright (c) 2007 by Darius Blaszyk
 
@@ -18,7 +17,7 @@ unit fpprof;
 interface
 
 uses
-  SysUtils, lineinfo;
+  SysUtils, lineinfo, FPPWriter;
 
 procedure fpprof_entry_profile;
 procedure fpprof_exit_profile;
@@ -26,8 +25,7 @@ procedure fpprof_exit_profile;
 implementation
 
 var
-  fpprof_text: ^Text = nil;
-  fpprof_allocated: boolean;
+  fpprof_log: TFPPWriter;
   fpprof_starttime: QWord;
   
 { The following includes define platform/architecture specific
@@ -42,77 +40,46 @@ implementations to get accurate system times. The function is defined as:
   {$i systemtime.inc}
 {$ENDIF}
 
-function fpprof_info(frame_pointer: pointer): string;
+procedure fpprof_info(position: string; frame_pointer: pointer);
 var
   caller_addr: Pointer;
   func: string;
   source: string;
   line: longint;
   sline: string;
-  SystemTime : string;
+  systemtime : string;
 begin
-  str(fpprof_getsystemtime - fpprof_starttime, SystemTime);
+  str(fpprof_getsystemtime - fpprof_starttime, systemtime);
 
   caller_addr := get_caller_addr(frame_pointer);
   GetLineInfo(ptruint(caller_addr), func, source, line);
   str(line, sline);
 
-  fpprof_info := SystemTime + ' ' + func + ' ' + source + ' ' + sline;
+  fpprof_log.AddTrace(position, systemtime, func, source, sline);
 end;
 
 procedure fpprof_entry_profile;
 begin
-  if not Assigned(fpprof_text) then exit;
-  writeln(fpprof_text^, 'entry ', fpprof_info(get_frame));
+  fpprof_info('entry ', get_frame);
 end;
 
 procedure fpprof_exit_profile;
 begin
-  if not Assigned(fpprof_text) then exit;
-  writeln(fpprof_text^, 'exit ', fpprof_info(get_frame));
+  fpprof_info('exit ', get_frame);
 end;
 
 procedure fpprof_initialize;
-var
-  fpprof_filename: string;
 begin
-  fpprof_filename := ChangeFileExt(ExpandFileName(Paramstr(0)), '.fpprof');
+  fpprof_log := TFPPWriter.Create(True);
+  fpprof_log.CreateTraceLog;
 
-  New(fpprof_text);
-
-  Assign(fpprof_text^, fpprof_filename);
-  {$I-}
-  Rewrite(fpprof_text^);
-  {$I+}
-
-  if ioresult<>0 then
-  begin
-    Freemem(fpprof_text);
-    fpprof_text := nil;
-    writeln('cannot open file: ', fpprof_filename);
-  end;
-
-  if fpprof_text=nil then
-  begin
-    if TextRec(Output).Mode=fmClosed then
-      fpprof_text := nil
-    else
-      fpprof_text := @Output;
-    fpprof_allocated := false;
-  end else
-    fpprof_allocated := true;
-    
   fpprof_starttime := fpprof_getsystemtime;
 end;
 
 procedure fpprof_finalize;
 begin
-  if fpprof_allocated then
-  begin
-    Close(fpprof_text^);
-    Dispose(fpprof_text);
-    fpprof_allocated := false;
-  end;
+  fpprof_log.Save;
+  fpprof_log.Free;
 end;
 
 initialization

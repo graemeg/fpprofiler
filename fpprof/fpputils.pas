@@ -6,7 +6,7 @@ unit fpputils;
 interface
 
 uses
-  pscanner, PasTree, dos, SysUtils, Classes;
+  pscanner, PasTree, dos, SysUtils, Classes, FPPWriter;
 
 const
   FPPROF_EXT = '.fpprof';
@@ -161,13 +161,14 @@ procedure InsertProfilingCode(FileList: TStrings; ModTokenProc: TModTokenProc);
 var
   i: integer;
   PasTokenList: TFPList;
-  IgnoreFile: Text;
   Success: boolean;
+  writer: TFPPWriter;
 begin
   PasTokenList := TFPList.Create;
   
-  assign(IgnoreFile, 'ignorelist.dat');
-  rewrite(IgnoreFile);
+  writer := TFPPWriter.Create;
+  writer.CreateIgnored;
+
   //make a copy of the original files and process them
   for i := 0 to FileList.Count - 1 do
   begin
@@ -188,12 +189,15 @@ begin
         writeln(' .......... OK')
     except
       writeln(' .......... FAIL');
-      writeln(IgnoreFile, FileList[i]);
+      writer.AddIgnoredFile(FileList[i]);
     end;
     
     PasTokenList.Clear;
   end;
-  close(IgnoreFile);
+
+  writer.Save;
+  writer.Free;
+
   PasTokenList.Free;
 end;
 
