@@ -3,7 +3,7 @@ program fppview;
 {$mode objfpc}{$H+}
 
 uses
-  CustApp, Classes, FPPLogReader, FPPStats, FPPReport, SysUtils;
+  CustApp, Classes, FPPReader, FPPStats, FPPReport, SysUtils;
 
 type
 

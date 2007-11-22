@@ -1,4 +1,4 @@
-unit FPPLogReader;
+unit FPPReader;
 
 {$mode objfpc}{$H+}
 

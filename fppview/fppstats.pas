@@ -5,7 +5,7 @@ unit FPPStats;
 interface
 
 uses
-  Classes, SysUtils, FPPLogReader, FPPReport, FPCallGraph;
+  Classes, SysUtils, FPPReader, FPPReport, FPCallGraph;
 
 type
 
