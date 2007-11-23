@@ -7,6 +7,9 @@ interface
 uses
   Classes, SysUtils, DOM, XMLWrite, XMLRead;
   
+const
+  _FPPROFLOG_ = 'fpprof.xml';
+  
 type
 
   { TFPPWriter }
@@ -35,7 +38,7 @@ implementation
 constructor TFPPWriter.Create(Reload: boolean);
 begin
   if Reload then
-    ReadXMLFile(XMLDoc, 'fpprof.xml');
+    ReadXMLFile(XMLDoc, _FPPROFLOG_);
 
   if not Reload or not Assigned(XMLDoc) then
   begin
@@ -58,7 +61,7 @@ end;
 
 procedure TFPPWriter.Save;
 begin
-  WriteXMLFile(XMLDoc, 'fpprof.xml');
+  WriteXMLFile(XMLDoc, _FPPROFLOG_);
 end;
 
 procedure TFPPWriter.CreateTraceLog;

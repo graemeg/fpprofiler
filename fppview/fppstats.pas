@@ -13,7 +13,7 @@ type
 
   TCustomProfStats = class(TObject)
     FReport: TFPPReportType;
-    FReader: TFPPLogReader;
+    FReader: TFPPReader;
     procedure SetReport(const AValue: TFPPReportType);
   private
 
@@ -21,7 +21,7 @@ type
     FPPReport: TCustomFPPReport;
 
   public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); virtual;
+    constructor Create(AReader: TFPPReader; const AValue: TFPPReportType); virtual;
     destructor Destroy; override;
     
     property Report: TFPPReportType read FReport write SetReport;
@@ -34,7 +34,7 @@ type
   private
 
   public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
+    constructor Create(AReader: TFPPReader; const AValue: TFPPReportType); override;
     destructor Destroy; override;
 
     procedure Run; override;
@@ -46,7 +46,7 @@ type
   private
 
   public
-    constructor Create(AReader: TFPPLogReader; const AValue: TFPPReportType); override;
+    constructor Create(AReader: TFPPReader; const AValue: TFPPReportType); override;
     destructor Destroy; override;
 
     procedure Run; override;
@@ -68,7 +68,7 @@ begin
   end;
 end;
 
-constructor TCustomProfStats.Create(AReader: TFPPLogReader;
+constructor TCustomProfStats.Create(AReader: TFPPReader;
   const AValue: TFPPReportType);
 begin
   FReader := AReader;
@@ -88,7 +88,7 @@ end;
 
 { TFlatProfStats }
 
-constructor TFlatProfStats.Create(AReader: TFPPLogReader; const AValue: TFPPReportType);
+constructor TFlatProfStats.Create(AReader: TFPPReader; const AValue: TFPPReportType);
 begin
   inherited Create(AReader, AValue);
 end;
@@ -125,8 +125,7 @@ end;
 
 { TCallGraphStats }
 
-constructor TCallGraphStats.Create(AReader: TFPPLogReader;
-  const AValue: TFPPReportType);
+constructor TCallGraphStats.Create(AReader: TFPPReader; const AValue: TFPPReportType);
 begin
   inherited Create(AReader, AValue);
 end;

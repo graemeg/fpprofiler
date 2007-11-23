@@ -37,7 +37,7 @@ end;
 
 procedure TFPPViewApp.Run;
 var
-  FPPReader: TFPPLogReader;
+  FPPReader: TFPPReader;
   ProfStats: TCustomProfStats;
   ReportType: TFPPReportType;
   sTmp: string;
@@ -46,7 +46,7 @@ begin
     Usage;
 
   if HasOption('l', 'log') then
-    FPPReader := TFPPLogReader.Create(GetOptionValue('l', 'log'))
+    FPPReader := TFPPReader.Create(GetOptionValue('l', 'log'))
   else
     Usage;
 

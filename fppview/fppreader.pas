@@ -5,11 +5,11 @@ unit FPPReader;
 interface
 
 uses
-  Classes, SysUtils, StrUtils;
+  Classes, SysUtils, StrUtils, DOM, XMLRead;
 
 type
   TPosition = (poEntry, poExit);
-  TFPPEntry = record
+  TTrace = record
     position: TPosition;
     elapsed: longint;    //msec since first frame was created
     func: string;        //function - procedure name that made the call
@@ -17,88 +17,97 @@ type
     line: integer;       //line number in sourcefile
   end;
 
-  TFPPEntryArray = array of TFPPEntry;
+  TTraceList = array of TTrace;
 
-  { TFPPLogReader }
+  { TFPPReader }
 
-  TFPPLogReader = class(TObject)
+  TFPPReader = class(TObject)
   private
     FCount: integer;
+    FList: TTraceList;
 
-    FData: TFPPEntryArray;
-
-    function GetData(Index: Integer): TFPPEntry;
-    procedure ReadLine(ALine: string);
-    procedure SetData(Index: Integer; const AValue: TFPPEntry);
+    function GetList(Index: Integer): TTrace;
+    procedure SetList(Index: Integer; const AValue: TTrace);
   public
-    constructor Create(const FileName: string);
+    constructor Create(const AFileName: string);
     destructor Destroy; override;
 
-    procedure AddData(position: string; elapsed: longint; func: string; source: string; line: integer);
+    procedure AddData(position, time, func, source, line: string);
     property Count: integer read FCount;
-    property Data[Index: Integer]: TFPPEntry read GetData write SetData; default;
+    property List[Index: Integer]: TTrace read GetList write SetList; default;
   end;
 
 implementation
 
-{ TFPPLogReader }
+{ TFPPReader }
 
-procedure TFPPLogReader.ReadLine(ALine: string);
+function TFPPReader.GetList(Index: Integer): TTrace;
 begin
-  AddData(ExtractDelimited(1, ALine, [' ']),
-          StrToInt(ExtractDelimited(2, ALine, [' '])),
-          ExtractDelimited(3, ALine, [' ']),
-          ExtractDelimited(4, ALine, [' ']),
-          StrToInt(ExtractDelimited(5, ALine, [' '])));
+  Result := FList[Index];
 end;
 
-function TFPPLogReader.GetData(Index: Integer): TFPPEntry;
+procedure TFPPReader.SetList(Index: Integer; const AValue: TTrace);
 begin
-  Result := FData[Index];
+  FList[Index] := AValue;
 end;
 
-procedure TFPPLogReader.SetData(Index: Integer; const AValue: TFPPEntry);
-begin
-  FData[Index] := AValue;
-end;
-
-constructor TFPPLogReader.Create(const FileName: string);
+constructor TFPPReader.Create(const AFileName: string);
 var
-  T: Text;
-  s: string;
+  XMLDoc: TXMLDocument;
+  Node: TDomNode;
+  NodeList: TDomNodeList;
+  i: integer;
+  Attributes: TDOMNamedNodeMap;
 begin
-  FCount := 0;
-  SetLength(FData, FCount);
-
-  assign(T, FileName);
-  reset(T);
-
-  while not eof(T) do
+  if not FileExists(AFileName) then
   begin
-    readln(T, s);
-    ReadLine(s);
+    writeln('error: cannot find ', AFileName);
+    halt;
   end;
+  
+  FCount := 0;
+  SetLength(FList, FCount);
+
+  ReadXMLFile(XMLDoc, AFileName);
+  Node := XMLDoc.FindNode('profilelog');
+  Node := Node.FindNode('tracelog');
+
+  NodeList := Node.GetChildNodes;
+  
+  for i := 0 to NodeList.Count -1 do
+  begin
+    Attributes := NodeList[i].Attributes;
+    AddData(Attributes.GetNamedItem('pos').NodeValue,
+            Attributes.GetNamedItem('time').NodeValue,
+            Attributes.GetNamedItem('func').NodeValue,
+            Attributes.GetNamedItem('source').NodeValue,
+            Attributes.GetNamedItem('line').NodeValue);
+  end;
+
+  Node.Free;
+  NodeList.Free;
+  XMLDoc.Free;
 end;
 
-destructor TFPPLogReader.Destroy;
+destructor TFPPReader.Destroy;
 begin
   inherited Destroy;
 end;
 
-procedure TFPPLogReader.AddData(position: string; elapsed: longint; func: string; source: string; line: integer);
+procedure TFPPReader.AddData(position, time, func, source, line: string);
 begin
   Inc(FCount);
-  SetLength(FData, FCount);
+  SetLength(FList, FCount);
 
   if position = 'entry' then
-    FData[Pred(FCount)].position := poEntry
+    FList[Pred(FCount)].position := poEntry
   else
-    FData[Pred(FCount)].position := poExit;
+    FList[Pred(FCount)].position := poExit;
 
-  FData[Pred(FCount)].elapsed := elapsed;
-  FData[Pred(FCount)].func := func;
-  FData[Pred(FCount)].source := source;
-  FData[Pred(FCount)].line := line;
+  FList[Pred(FCount)].elapsed := StrToInt(time);
+  FList[Pred(FCount)].func := func;
+  FList[Pred(FCount)].source := source;
+  FList[Pred(FCount)].line := StrToInt(line);
 end;
 
 end.
