@@ -5,7 +5,7 @@ unit FPPStats;
 interface
 
 uses
-  Classes, SysUtils, FPPReader, FPPReport, FPCallGraph;
+  Classes, SysUtils, FPPReader, FPPReport, FPCallGraph, ContNrs;
 
 type
 
@@ -139,17 +139,27 @@ procedure TCallGraphStats.Run;
 var
   FPCallGraph: TFPCallGraph;
   i: integer;
+  Caller: TStack;
 begin
   inherited Run;
 
   FPCallGraph := TFPCallGraph.Create;
   
-  //this needs to be fixed, until now not the right
-  //caller and callee are passed to CallGraph, but
-  //we need to start somewhere don't we?
-  for i := 0 to FReader.Count - 2 do
-    FPCallGraph.AddCall(FReader[i].func, FReader[i+1].func);
+  Caller := TStack.Create;
+  //first entry is mother of all calls so put it on the stack
+  Caller.Push(@FReader[0].func);
+  
+  for i := 1 to FReader.Count - 1 do
+    case FReader[i].position of
+      poEntry: begin
+                 FPCallGraph.AddCall(string(Caller.Peek^), FReader[i].func);
+                 Caller.Push(@FReader[i].func);
+               end;
+      poExit: Caller.Pop;
+    end;
 
+  Caller.Free;
+  
   FPPReport.CallGraph(FPCallGraph);
 
   FPCallGraph.Free;

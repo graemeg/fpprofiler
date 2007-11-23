@@ -43,6 +43,7 @@ var
   r: integer;
   c: integer;
 begin
+  //writeln('Calling ', ACalled, ' from ', ACaller);
   r := FindCall(ACaller);
   c := FindCall(ACalled);
   

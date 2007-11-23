@@ -99,7 +99,7 @@ begin
   Inc(FCount);
   SetLength(FList, FCount);
 
-  if position = 'entry' then
+  if Trim(position) = 'entry' then
     FList[Pred(FCount)].position := poEntry
   else
     FList[Pred(FCount)].position := poExit;
