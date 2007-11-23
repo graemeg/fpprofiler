@@ -48,7 +48,10 @@ begin
   if HasOption('l', 'log') then
     FPPReader := TFPPReader.Create(GetOptionValue('l', 'log'))
   else
-    Usage;
+    if FileExists('fpprof.xml') then
+      FPPReader := TFPPReader.Create('fpprof.xml')
+    else
+      Usage;
 
   //default
   ReportType := rtPlain;
@@ -103,7 +106,7 @@ begin
   writeln;
   writeln('Where options is one or more of the following:');
   ShowOption('h','help','This screen.');
-  ShowArgOption('l','log','Profile log file (mandatory).');
+  ShowArgOption('l','log','Profile log file (default: fpprof.xml).');
   writeln;
   writeln('Profiling statistics');
   ShowArgOption('s','stat','flat','Flat profile (default).');
