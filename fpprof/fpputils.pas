@@ -17,7 +17,7 @@ type
     value: string;
   end;
 
-  TModTokenProc = procedure(tokenlist: TFPList);
+  TModTokenProc = procedure(AFileName: string; tokenlist: TFPList);
 
 procedure FileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
 procedure RecursiveFileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
@@ -181,7 +181,7 @@ begin
 
       //perform the code modification
       if Assigned(ModTokenProc) then
-        ModTokenProc(PasTokenList);
+        ModTokenProc(FileList[i], PasTokenList);
 
       SaveTokenList(FileList[i], PasTokenList);
       

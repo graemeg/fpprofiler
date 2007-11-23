@@ -54,7 +54,7 @@ var
     ATokenList.Insert(APos, pt);
   end;
 
-  procedure ModifyCode(tokenlist: TFPList);
+  procedure ModifyCode(AFileName: string; tokenlist: TFPList);
   var
     i: integer;
     begin_count: integer;
@@ -88,7 +88,8 @@ var
 
   begin
   //insert fpprof unit
-    InsertFPProfUnit;
+    if ExtractFileExt(AFileName) <> '.inc' then
+      InsertFPProfUnit;
 
   //insert function fpprof_info after each tkBegin and before each tkEnd
     i := 0;

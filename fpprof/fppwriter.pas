@@ -37,7 +37,7 @@ implementation
 
 constructor TFPPWriter.Create(Reload: boolean);
 begin
-  if Reload then
+  if Reload and FileExists(_FPPROFLOG_) then
     ReadXMLFile(XMLDoc, _FPPROFLOG_);
 
   if not Reload or not Assigned(XMLDoc) then
