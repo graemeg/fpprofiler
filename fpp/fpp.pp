@@ -111,7 +111,7 @@ var
         begin
           if begin_count = 1 then
           begin
-            InsertToken(tokenlist, i - 1, tkIdentifier, ' fpprof_exit_profile; ');
+            InsertToken(tokenlist, i - 1, tkIdentifier, ' ;fpprof_exit_profile; ');
             Inc(i);
           end;
           if begin_count > 0 then
