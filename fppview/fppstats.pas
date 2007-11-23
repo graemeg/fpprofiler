@@ -106,18 +106,20 @@ begin
     
   FPPReport.Clear;
   FPPReport.Cells[0,0] := '#';
-  FPPReport.Cells[0,1] := 'Elapsed msec';
-  FPPReport.Cells[0,2] := 'Function';
-  FPPReport.Cells[0,3] := 'Source';
-  FPPReport.Cells[0,4] := 'Line';
+  FPPReport.Cells[0,1] := 'Position';
+  FPPReport.Cells[0,2] := 'Elapsed msec';
+  FPPReport.Cells[0,3] := 'Function';
+  FPPReport.Cells[0,4] := 'Source';
+  FPPReport.Cells[0,5] := 'Line';
 
   for i := 0 to Pred(FReader.Count) do
   begin
     FPPReport.Cells[i + 1, 0] :=  IntToStr(i + 1);
-    FPPReport.Cells[i + 1, 1] :=  IntToStr(FReader[i].elapsed);
-    FPPReport.Cells[i + 1, 2] :=  FReader[i].func;
-    FPPReport.Cells[i + 1, 3] :=  FReader[i].source;
-    FPPReport.Cells[i + 1, 4] :=  IntToStr(FReader[i].line);
+    FPPReport.Cells[i + 1, 1] :=  FReader[i].position;
+    FPPReport.Cells[i + 1, 2] :=  IntToStr(FReader[i].elapsed);
+    FPPReport.Cells[i + 1, 3] :=  FReader[i].func;
+    FPPReport.Cells[i + 1, 4] :=  FReader[i].source;
+    FPPReport.Cells[i + 1, 5] :=  IntToStr(FReader[i].line);
   end;
 
   FPPReport.WriteTable;
@@ -139,24 +141,30 @@ procedure TCallGraphStats.Run;
 var
   FPCallGraph: TFPCallGraph;
   i: integer;
-  Caller: TStack;
+  Caller: TStrings;
+  s: string;
 begin
   inherited Run;
 
   FPCallGraph := TFPCallGraph.Create;
   
-  Caller := TStack.Create;
+  Caller := TStringList.Create;
   //first entry is mother of all calls so put it on the stack
-  Caller.Push(@FReader[0].func);
+  Caller.Add(FReader[0].func);
   
   for i := 1 to FReader.Count - 1 do
-    case FReader[i].position of
-      poEntry: begin
-                 FPCallGraph.AddCall(string(Caller.Peek^), FReader[i].func);
-                 Caller.Push(@FReader[i].func);
-               end;
-      poExit: Caller.Pop;
-    end;
+    if FReader[i].position = 'entry' then
+    begin
+      //writeln('  peeking: ',Caller[0]);
+      FPCallGraph.AddCall(Caller[0], FReader[i].func);
+      //writeln('  pushing: ',FReader[i].func);
+      Caller.Insert(0, FReader[i].func);
+    end
+    else
+      begin
+        //writeln('  popping: ',Caller[0]);
+        Caller.Delete(0);
+      end;
 
   Caller.Free;
   

@@ -8,9 +8,8 @@ uses
   Classes, SysUtils, StrUtils, DOM, XMLRead;
 
 type
-  TPosition = (poEntry, poExit);
   TTrace = record
-    position: TPosition;
+    position: string;
     elapsed: longint;    //msec since first frame was created
     func: string;        //function - procedure name that made the call
     source: string;      //sourcefile where procedure is located
@@ -99,11 +98,7 @@ begin
   Inc(FCount);
   SetLength(FList, FCount);
 
-  if Trim(position) = 'entry' then
-    FList[Pred(FCount)].position := poEntry
-  else
-    FList[Pred(FCount)].position := poExit;
-
+  FList[Pred(FCount)].position := Trim(position);
   FList[Pred(FCount)].elapsed := StrToInt(time);
   FList[Pred(FCount)].func := func;
   FList[Pred(FCount)].source := source;
