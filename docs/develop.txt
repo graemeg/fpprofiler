@@ -1,0 +1,9 @@
+This readme gives some pointers and tips for when developing fpprofiler
+
+==Compiling with Heaptrc==
+When developing fpprofiler it can be usefull to compile it with heaptrc
+the fpmake.pp file in the root directory contains a define HEAPTRC which 
+should be enabled. All included files will see this define and compile their
+targets with heaptrc support.
+To direct the output to a file set an environment variable 
+HEAPTRC='log=heaptrc.log'.
