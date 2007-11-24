@@ -14,8 +14,12 @@
     Description := 'this package is part of the fpprofiler project';
     Version := '0.1.0';
 
-    T:=Targets.AddProgram('passrctest');
+    T := Targets.AddProgram('passrctest');
+    {$IF defined(HEAPTRC)}
+      T.Options := '-gh -gl';
+    {$ENDIF}
     T.Mode := cmObjFPC;
     T.UnitPath.Add('..\fcl-passrc\');
     T.UnitPath.Add('..\fpprof\');
+
     EndPackage;

@@ -1,7 +1,7 @@
-    StartPackage('fpprof');
+    StartPackage('revert');
 
     {$IF defined(ALLPACKAGES)}
-      Directory:='fpprof';
+      Directory:='examples\revert';
       BaseInstallDir := '.';
     {$ELSE}
       BaseInstallDir := '..';
@@ -14,18 +14,12 @@
     Description := 'this package is part of the fpprofiler project';
     Version := '0.1.0';
 
-    T := Targets.AddUnit('pscanner.pp');
+    T := Targets.AddProgram('revert');
     {$IF defined(HEAPTRC)}
       T.Options := '-gh -gl';
     {$ENDIF}
-    {$IF defined(ALLPACKAGES)}
-      T.Directory := '..\..\fcl-passrc\';
-    {$ELSE}
-      T.Directory := '..\fcl-passrc\';
-    {$ENDIF}
-    T.ResourceStrings := True;
-
-    Targets.AddUnit('fpprof.pp');
-    Targets.AddUnit('fpputils.pas');
+    T.Mode := cmObjFPC;
+    T.UnitPath.Add('..\..\fcl-passrc\');
+    T.UnitPath.Add('..\..\fpprof\');
 
     EndPackage;

@@ -1,5 +1,7 @@
 program fpmake;
  
+{.$DEFINE HEAPTRC}
+
 uses
   fpmkunit;
 
