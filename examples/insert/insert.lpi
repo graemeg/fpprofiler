@@ -35,7 +35,7 @@
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value=".\insert"/>
+      <Filename Value="bin\$(TargetCPU)-$(TargetOS)\insert"/>
     </Target>
     <SearchPaths>
       <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\fpprof\"/>

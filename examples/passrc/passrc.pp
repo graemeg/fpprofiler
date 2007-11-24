@@ -6,14 +6,13 @@ uses
   Classes, fpputils;
 
 var
-  PasTokenList: TFPList;
+  PasTokenList: TPasTokenList;
   
 begin
-  PasTokenList := TFPList.Create;
+  PasTokenList := TPasTokenList.Create;
   
-  ParseSource(ParamStr(1), PasTokenList);
-  SaveTokenList(ParamStr(1) + '.out', PasTokenList);
+  PasTokenList.ParseSource(ParamStr(1));
+  PasTokenList.SaveToFile(ParamStr(1) + '.out');
   writeln('info: done.');
   PasTokenList.Free;
-  readln;
 end.

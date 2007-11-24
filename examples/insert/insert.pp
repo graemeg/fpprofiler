@@ -21,11 +21,11 @@ begin
   //retrieve all source files in fpc source directory
   writeln('info: recursively searching files');
   FileList := TStringList.Create;
-  RecursiveFileSearch(fpcdir, '.pp;.pas;.inc;.lpr', FileList);
+  fpputils.FileSearch(fpcdir, '.pp;.pas;.inc;.lpr', FileList, True);
 
   writeln('info: processing files');
   InsertProfilingCode(FileList, nil);
 
+  FileList.Free;
   writeln('info: done.');
-  readln;
 end.

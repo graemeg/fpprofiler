@@ -35,7 +35,7 @@
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value=".\revert"/>
+      <Filename Value="bin\$(TargetCPU)-$(TargetOS)\revert"/>
     </Target>
     <SearchPaths>
       <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\fpprof\"/>

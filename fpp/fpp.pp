@@ -44,17 +44,7 @@ type
 var
   Application: TFPPApplication;
 
-  procedure InsertToken(ATokenList: TFPList; APos: integer; AToken: TToken; AValue: string);
-  var
-    pt: ^TPasToken;
-  begin
-    New(pt);
-    pt^.token := AToken;
-    pt^.Value := AValue;
-    ATokenList.Insert(APos, pt);
-  end;
-
-  procedure ModifyCode(AFileName: string; tokenlist: TFPList);
+  procedure ModifyCode(AFileName: string; tokenlist: TPasTokenList);
   var
     i: integer;
     begin_count: integer;
@@ -65,25 +55,25 @@ var
     begin
     //find uses clause and insert unit
       for i := 0 to tokenlist.Count - 1 do
-        if TPasToken(tokenlist[i]^).token = tkUses then
+        if tokenlist[i].token = tkUses then
         begin
         //insert fpprof unit (with whitespace and comma)
-          InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof,');
+          tokenlist.Insert(i + 1, tkIdentifier, ' fpprof,');
           Exit;
         end;
 
     //unit not found, find program / unit keyword
       for i := 0 to tokenlist.Count - 1 do
-        if (TPasToken(tokenlist[i]^).token = tkProgram) or
-          (TPasToken(tokenlist[i]^).token = tkUnit) then
+        if (tokenlist[i].token = tkProgram) or
+          (tokenlist[i].token = tkUnit) then
         begin
         //insert fpprof unit (with uses keyword)
-          InsertToken(tokenlist, i + 1, tkIdentifier, 'uses fpprof;');
+          tokenlist.Insert(i + 1, tkIdentifier, 'uses fpprof;');
           Exit;
         end;
 
     //just try and insert it at the beginning
-      InsertToken(tokenlist, 1, tkIdentifier, 'uses fpprof;');
+      tokenlist.Insert(1, tkIdentifier, 'uses fpprof;');
     end;
 
   begin
@@ -96,7 +86,7 @@ var
     begin_count := 0;
     while i < tokenlist.Count do
     begin
-      case TPasToken(tokenlist[i]^).token of
+      case tokenlist[i].token of
         tkCase: Inc(begin_count);
         tkBegin:
         begin
@@ -104,7 +94,7 @@ var
 
           if begin_count = 1 then
           begin
-            InsertToken(tokenlist, i + 1, tkIdentifier, ' fpprof_entry_profile; ');
+            tokenlist.Insert(i + 1, tkIdentifier, ' fpprof_entry_profile; ');
             Inc(i);
           end;
         end;
@@ -112,7 +102,7 @@ var
         begin
           if begin_count = 1 then
           begin
-            InsertToken(tokenlist, i - 1, tkIdentifier, ' ;fpprof_exit_profile; ');
+            tokenlist.Insert(i - 1, tkIdentifier, ' ;fpprof_exit_profile; ');
             Inc(i);
           end;
           if begin_count > 0 then
@@ -123,7 +113,7 @@ var
     end;
 
     //save result for debuging
-    //SaveTokenList('test.debug.pp', tokenlist);
+    //tokenlist.SaveToFile('test.debug.pp');
   end;
 
   procedure TEnvironment.AddSearchPath(path: string);

@@ -21,7 +21,7 @@ begin
   //retrieve all source files in fpc source directory
   writeln('info: recursively searching files');
   FileList := TStringList.Create;
-  RecursiveFileSearch(fpcdir, '.fpprof', FileList);
+  fpputils.FileSearch(fpcdir, '.fpprof', FileList, True);
 
   writeln('info: reverting all files');
   RemoveProfilingCode(FileList);
