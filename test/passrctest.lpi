@@ -35,7 +35,7 @@
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value=".\passrctest"/>
+      <Filename Value="bin\$(TargetCPU)-$(TargetOS)\passrctest"/>
     </Target>
     <SearchPaths>
       <OtherUnitFiles Value="..\fcl-passrc\;..\fpprof\"/>
@@ -49,6 +49,11 @@
     <CodeGeneration>
       <Generate Value="Faster"/>
     </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
+    </Linking>
     <Other>
       <CompilerPath Value="$(CompPath)"/>
     </Other>

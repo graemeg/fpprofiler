@@ -56,6 +56,7 @@ end;
 destructor TFPPWriter.Destroy;
 begin
   XMLDoc.Free;
+  Node.Free;
   inherited Destroy;
 end;
 
@@ -96,6 +97,8 @@ begin
     AttribStrings['line'] := line;
   end;
   Node.AppendChild(Element);
+  
+  Element.Free;
 end;
 
 procedure TFPPWriter.AddIgnoredFile(const AFileName: string);
@@ -105,6 +108,7 @@ begin
   Element := XMLDoc.CreateElement('file');
   Element.AttribStrings['name'] := AFileName;
   Node.AppendChild(Element);
+  Element.Free;
 end;
 
 end.

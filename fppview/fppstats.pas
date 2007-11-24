@@ -5,7 +5,7 @@ unit FPPStats;
 interface
 
 uses
-  Classes, SysUtils, FPPReader, FPPReport, FPCallGraph, ContNrs;
+  Classes, SysUtils, FPPReader, FPPReport, FPCallGraph;
 
 type
 
@@ -142,7 +142,6 @@ var
   FPCallGraph: TFPCallGraph;
   i: integer;
   Caller: TStrings;
-  s: string;
 begin
   inherited Run;
 

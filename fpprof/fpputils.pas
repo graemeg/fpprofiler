@@ -16,6 +16,7 @@ type
     token: TToken;
     value: string;
   end;
+  PPasToken = ^TPasToken;
 
   TModTokenProc = procedure(AFileName: string; tokenlist: TFPList);
 
@@ -24,42 +25,49 @@ procedure RecursiveFileSearch(SearchDir: string; ExtensionMask: string; var File
 procedure InsertProfilingCode(FileList: TStrings; ModTokenProc: TModTokenProc);
 procedure RemoveProfilingCodeFromFile(const FileName: string);
 procedure RemoveProfilingCode(FileList: TStrings);
-procedure ParseSource(FileName: string; var PasTokenList: TFPList);
+function ParseSource(FileName: string; var PasTokenList: TFPList): boolean;
 procedure SaveTokenList(FileName: string; PasTokenList: TFPList);
 
 implementation
 
-procedure ParseSource(FileName: string; var PasTokenList: TFPList);
+function ParseSource(FileName: string; var PasTokenList: TFPList): boolean;
 var
   pas: TPascalScanner;
   fr: TFileResolver;
   index: integer;
   token: TToken;
-  pt: ^TPasToken;
+  pt: PPasToken;
 begin
+  Result := False;
+  
   fr := TFileResolver.Create;
   pas := TPascalScanner.Create(fr);
-  pas.Options := [poSkipIncludeFiles, poDontEatDefines, poMonoLithicASMBlocks];
-  pas.OpenFile(FileName);
 
-  index := 0;
-  repeat
-    inc(index);
+  try
+    pas.Options := [poSkipIncludeFiles, poDontEatDefines, poMonoLithicASMBlocks];
+    pas.OpenFile(FileName);
 
-    token := pas.FetchToken;
+    index := 0;
+    repeat
+      inc(index);
 
-    New(pt);
-    pt^.token:= token;
-    pt^.value:= pas.CurTokenString;
-    PasTokenList.Add(pt);
+      token := pas.FetchToken;
 
-    {$ifdef debug}
-    //writeln(token, '>', pas.CurTokenString);
-    {$endif}
-  until pas.CurToken = tkEOF;
+      New(pt);
+      pt^.token:= token;
+      pt^.value:= pas.CurTokenString;
+      PasTokenList.Add(pt);
 
-  pas.Free;
-  fr.Free;
+      {$ifdef debug}
+      //writeln(token, '>', pas.CurTokenString);
+      {$endif}
+    until pas.CurToken = tkEOF;
+    
+    Result := True;
+  finally
+    pas.Free;
+    fr.Free;
+  end;
 end;
 
 procedure SaveTokenList(FileName: string; PasTokenList: TFPList);
@@ -131,6 +139,8 @@ begin
     until FindNext(Info)<>0;
 
   FindClose(Info);
+
+  ExtensionList.Free;
 end;
 
 procedure RecursiveFileSearch(SearchDir: string; ExtensionMask: string; var FileList: TStrings);
@@ -155,11 +165,14 @@ begin
     until FindNext(Info)<>0;
   end;
   FindClose(Info);
+  
+  ExtensionList.Free;
 end;
 
 procedure InsertProfilingCode(FileList: TStrings; ModTokenProc: TModTokenProc);
 var
   i: integer;
+  j: integer;
   PasTokenList: TFPList;
   Success: boolean;
   writer: TFPPWriter;
@@ -172,12 +185,12 @@ begin
   //make a copy of the original files and process them
   for i := 0 to FileList.Count - 1 do
   begin
-    write('inserting code to -> ', FileList[i]);
+    write('insert: ', FileList[i]);
     
     try
-      ParseSource(FileList[i], PasTokenList);
+      Success := ParseSource(FileList[i], PasTokenList);
 
-      Success :=  RenameFile(FileList[i], FileList[i] + FPPROF_EXT);
+      Success := Success and RenameFile(FileList[i], FileList[i] + FPPROF_EXT);
 
       //perform the code modification
       if Assigned(ModTokenProc) then
@@ -192,6 +205,10 @@ begin
       writer.AddIgnoredFile(FileList[i]);
     end;
     
+    //clear list and dispose members
+    for j := 0 to PasTokenList.Count - 1 do
+      Dispose(PPasToken(PasTokenList[j]));
+
     PasTokenList.Clear;
   end;
 
@@ -207,7 +224,7 @@ var
 begin
   NewFileName := Copy(FileName, 1, Length(FileName) - Length(FPPROF_EXT));
 
-  write('reverting -> ', NewFileName);
+  write('revert: ', NewFileName);
 
   DeleteFile(NewFileName);
   if RenameFile(FileName, NewFileName) then
