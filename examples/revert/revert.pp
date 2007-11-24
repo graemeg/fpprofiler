@@ -26,5 +26,6 @@ begin
   writeln('info: reverting all files');
   RemoveProfilingCode(FileList);
 
+  FileList.Free;
   writeln('info: done.');
 end.
