@@ -24,29 +24,19 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <Units Count="3">
+    <Units Count="1">
       <Unit0>
-        <Filename Value="passrcex.pp"/>
+        <Filename Value="passrc.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="passrcex"/>
+        <UnitName Value="passrc"/>
       </Unit0>
-      <Unit1>
-        <Filename Value="test.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="test"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="..\..\fpputils.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="fpputils"/>
-      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="5"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value=".\passrcex"/>
+      <Filename Value="bin\$(TargetCPU)-$(TargetOS)\passrc"/>
     </Target>
     <SearchPaths>
       <OtherUnitFiles Value="..\..\fcl-passrc\;..\..\fpprof\"/>
