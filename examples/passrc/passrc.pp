@@ -1,4 +1,4 @@
-program passrcex;
+program passrc;
 
 {$mode objfpc}
 
