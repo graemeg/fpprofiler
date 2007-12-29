@@ -69,7 +69,7 @@ begin
     repeat
       if Recursive then
         if ((Info.Attr and faDirectory) = faDirectory) and (Info.Name <> '.') and (Info.Name <> '..')then
-          FileSearch(SearchDir + Info.Name, ExtensionMask, FileList);
+          FileSearch(SearchDir + Info.Name, ExtensionMask, FileList, Recursive);
 
       if ExtensionList.IndexOf(ExtractFileExt(Info.Name)) <> -1 then
         FileList.Add(SearchDir + Info.Name);

@@ -56,7 +56,7 @@ end;
 destructor TFPPWriter.Destroy;
 begin
   XMLDoc.Free;
-  Node.Free;
+
   inherited Destroy;
 end;
 
