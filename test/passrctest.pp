@@ -1,3 +1,18 @@
+{
+    This file is part of the Free Pascal Profiler.
+    Copyright (c) 2007 by Darius Blaszyk
+
+    Profiler testcase application (compile FPC)
+
+    See the file COPYING.GPL, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ **********************************************************************}
+
 program passrctest;
 
 {$mode objfpc}
@@ -28,6 +43,7 @@ begin
   RecursiveFileSearch(fpcdir, '.pp;.pas;.inc;.lpr', FileList);
 
   writeln('info: processing files');
+  //don't insert any code, but just touch them by the source scanner
   InsertProfilingCode(FileList, nil);
   
   //compile fpc

@@ -1,3 +1,18 @@
+{
+    This file is part of the Free Pascal Profiler.
+    Copyright (c) 2007 by Darius Blaszyk
+
+    Profiling test file
+
+    See the file COPYING.GPL, included in this distribution,
+    for details about the copyright.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ **********************************************************************}
+
 program test001;
 
 {$mode objfpc}{$H+}
