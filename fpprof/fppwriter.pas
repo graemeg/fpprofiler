@@ -108,7 +108,6 @@ begin
   Element := XMLDoc.CreateElement('file');
   Element.AttribStrings['name'] := AFileName;
   Node.AppendChild(Element);
-  Element.Free;
 end;
 
 end.
