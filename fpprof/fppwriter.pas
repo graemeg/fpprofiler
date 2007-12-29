@@ -97,8 +97,6 @@ begin
     AttribStrings['line'] := line;
   end;
   Node.AppendChild(Element);
-  
-  Element.Free;
 end;
 
 procedure TFPPWriter.AddIgnoredFile(const AFileName: string);
