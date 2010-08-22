@@ -42,7 +42,7 @@ type
   
     function GetList(index: integer): TPasToken;
     procedure SetFileName(const AValue: string);
-    procedure SetList(index: integer; const AValue: TPasToken);
+    procedure SetList(AIndex: integer; const AValue: TPasToken);
 
   public
     constructor Create;
@@ -177,7 +177,7 @@ begin
 
 end;
 
-procedure TPasTokenList.SetList(index: integer; const AValue: TPasToken);
+procedure TPasTokenList.SetList(AIndex: integer; const AValue: TPasToken);
 begin
   FList.Add(@AValue);
 end;
