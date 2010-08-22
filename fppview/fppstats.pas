@@ -92,6 +92,7 @@ end;
 
 destructor TCustomProfStats.Destroy;
 begin
+  FPPReport.Free;
   inherited Destroy;
 end;
 
