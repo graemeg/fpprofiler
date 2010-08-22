@@ -50,7 +50,7 @@ type
     
     function Count: integer;
     function ParseSource(AFileName: string): boolean;
-    function Add(AToken: TToken; AValue: string): Integer;
+    procedure Add(AToken: TToken; AValue: string);
     procedure Clear;
     procedure Insert(APos: integer; AToken: TToken; AValue: string);
     procedure SaveToFile(const AFileName: string);
@@ -301,7 +301,7 @@ begin
   end;
 end;
 
-function TPasTokenList.Add(AToken: TToken; AValue: string): Integer;
+procedure TPasTokenList.Add(AToken: TToken; AValue: string);
 begin
   Insert(0, AToken, AValue);
 end;
