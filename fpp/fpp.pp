@@ -217,7 +217,6 @@ var
     ShowArgOption('i','no-insert','Do not insert profiling code.');
     ShowArgOption('r','no-remove','Do not remove profiling code.');
     writeln;
-    halt;
   end;
 
   procedure TFPPApplication.Compile;
@@ -240,12 +239,12 @@ var
   constructor TFPPApplication.Create(TheOwner: TComponent);
   begin
     inherited Create(TheOwner);
-
     Environment := TEnvironment.Create;
   end;
 
   destructor TFPPApplication.Destroy;
   begin
+    Environment.Free;
     inherited Destroy;
   end;
 
