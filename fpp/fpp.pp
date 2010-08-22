@@ -43,15 +43,13 @@ type
   private
     Environment: TEnvironment;
     Verbose: boolean;
-
-    procedure ShowHelp;
+    procedure ShowProductInfo;
     procedure Show(msg: string);
     procedure Compile;
     procedure Usage;
   public
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
-
     procedure Run;
   end;
 
@@ -178,10 +176,10 @@ var
 
 { TFPPApplication }
 
-  procedure TFPPApplication.ShowHelp;
+  procedure TFPPApplication.ShowProductInfo;
   begin
-    writeln('GNU FreePascal profiler 0.1');
-    writeln('Copyright 2007 Darius Blaszyk.');
+    writeln('GNU FreePascal profiler 0.2');
+    writeln('Copyright 2007 Darius Blaszyk. Contributions by Graeme Geldenhuys 2010.');
     writeln('FPP is free software, covered by the GNU General Public License, and you are');
     writeln('welcome to change it and/or distribute copies of it under certain conditions.');
     writeln('There is absolutely no warranty for FPP.');
@@ -253,11 +251,14 @@ var
 
   procedure TFPPApplication.Run;
   begin
-    ShowHelp;
+    // TODO: Add a Silent option with no output
+    ShowProductInfo;
 
     if HasOption('h','help') then
+    begin
       Usage;
-
+      exit;
+    end;
     //insert profiling code
     if not HasOption('i','no-insert') then
       InsertProfilingCode(Environment.FileList('.pp;.pas;.inc;.lpr'), @ModifyCode);
