@@ -87,7 +87,10 @@ begin
           FileSearch(SearchDir + Info.Name, ExtensionMask, FileList, Recursive);
 
       if ExtensionList.IndexOf(ExtractFileExt(Info.Name)) <> -1 then
-        FileList.Add(SearchDir + Info.Name);
+      begin
+        if FileList.IndexOf(SearchDir + Info.Name) = -1 then
+          FileList.Add(SearchDir + Info.Name);
+      end;
     until FindNext(Info)<>0;
   end;
   FindClose(Info);
