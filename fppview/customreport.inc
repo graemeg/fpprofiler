@@ -35,6 +35,7 @@ end;
 
 destructor TCustomFPPReport.Destroy;
 begin
+  Clear;
   inherited Destroy;
 end;
 
