@@ -79,7 +79,7 @@ begin
   ExtensionList.Delimiter := ';';
   ExtensionList.DelimitedText := ExtensionMask;
 
-  if FindFirst(SearchDir+'*',faAnyFile and faDirectory,Info)=0 then
+  if FindFirst(SearchDir+AllFilesMask, faAnyFile and faDirectory, Info) = 0 then
   begin
     repeat
       if Recursive then
