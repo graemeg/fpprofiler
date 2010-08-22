@@ -49,7 +49,7 @@ end;
 destructor TFPCallGraph.Destroy;
 begin
   Caller.Free;
-
+  SetLength(Called, 0, 0);
   inherited Destroy;
 end;
 
