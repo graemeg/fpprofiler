@@ -146,7 +146,7 @@ var
     PathList := TStringList.Create;
 
     //add debugging info and fpprof unit path
-    CommandLine := '-g -Fu' + getenv('fpprof');;
+    CommandLine := '-g -gl -Fu' + GetEnvironmentVariable('fpprof');
 
     for i := 1 to ParamCount do
     begin
