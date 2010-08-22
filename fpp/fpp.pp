@@ -224,16 +224,17 @@ var
     FPCProcess: TProcess;
   begin
     FPCProcess := TProcess.Create(nil);
+    try
+      FPCProcess.CommandLine := 'fpc ' + Environment.CommandLine;
 
-    FPCProcess.CommandLine := 'fpc ' + Environment.CommandLine;
+      writeln('executing: ', FPCProcess.CommandLine);
+      writeln;
 
-    writeln('executing: ', FPCProcess.CommandLine);
-    writeln;
-  
-    FPCProcess.Options := FPCProcess.Options + [poWaitOnExit];
-    FPCProcess.Execute;
-
-    FPCProcess.Free;
+      FPCProcess.Options := FPCProcess.Options + [poWaitOnExit];
+      FPCProcess.Execute;
+    finally
+      FPCProcess.Free;
+    end;
   end;
 
   constructor TFPPApplication.Create(TheOwner: TComponent);
