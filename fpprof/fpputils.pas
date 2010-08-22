@@ -274,7 +274,6 @@ var
   fr: TFileResolver;
   index: integer;
   token: TToken;
-  pt: PPasToken;
 begin
   Result := False;
 
@@ -282,7 +281,6 @@ begin
   pas := TPascalScanner.Create(fr);
 
   try
-    pas.Options := [poSkipIncludeFiles, poDontEatDefines, poMonoLithicASMBlocks];
     pas.OpenFile(AFileName);
 
     index := 0;
