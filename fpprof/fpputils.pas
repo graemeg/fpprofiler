@@ -137,6 +137,7 @@ begin
   writer.Free;
 
   PasTokenList.Free;
+  FileList.Free;
 end;
 
 procedure RemoveProfilingCodeFromFile(const FileName: string);
