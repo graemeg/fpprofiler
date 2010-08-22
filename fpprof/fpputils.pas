@@ -15,13 +15,13 @@
 
 unit fpputils;
 
-{$mode objfpc}
+{$mode objfpc}{$H+}
 { $define debug}
 
 interface
 
 uses
-  pscanner, PasTree, dos, SysUtils, Classes, FPPWriter;
+  pscanner, PasTree, SysUtils, Classes, FPPWriter;
 
 const
   FPPROF_EXT = '.fpprof';

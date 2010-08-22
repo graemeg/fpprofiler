@@ -15,10 +15,10 @@
 
 program fpp;
 
-{$mode objfpc}
+{$mode objfpc}{$H+}
 
 uses
-  Classes, Process, CustApp, SysUtils, fpputils, PScanner, Dos;
+  Classes, Process, CustApp, SysUtils, PScanner, FPPWriter, fpputils;
 
 type
 
@@ -32,7 +32,6 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    
     property CommandLine: string read FCommandLine write FCommandLine;
     property PathList: TStrings read FPathList write FPathList;
     function FileList(ExtensionMask: string): TStrings;

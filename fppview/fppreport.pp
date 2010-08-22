@@ -15,6 +15,8 @@
 
 unit FPPReport;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses

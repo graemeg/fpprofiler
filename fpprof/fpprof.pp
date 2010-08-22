@@ -15,6 +15,8 @@
 
 unit fpprof;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
@@ -44,8 +46,7 @@ implementations to get accurate system times. The function is defined as:
 procedure fpprof_info(position: string; frame_pointer: pointer);
 var
   caller_addr: Pointer;
-  func: string;
-  source: string;
+  func, source: shortstring;
   line: longint;
   sline: string;
   systemtime : string;
