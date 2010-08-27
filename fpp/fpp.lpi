@@ -42,9 +42,14 @@
       <Filename Value="fpp"/>
     </Target>
     <SearchPaths>
-      <OtherUnitFiles Value="..\fpprof\;\home\graemeg\programming\fpc-2.5.1\src\packages\fcl-passrc\src\"/>
+      <OtherUnitFiles Value="..\fpprof\"/>
       <UnitOutputDirectory Value="units\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
     <Other>
       <CompilerMessages>
         <UseMsgFile Value="True"/>
