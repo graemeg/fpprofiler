@@ -226,7 +226,7 @@ begin
   assign(t, AFileName);
   rewrite(t);
 
-  for i:=0 to FList.Count - 1 do
+  for i := FList.Count-1 downto 0 do
   begin
     case TPasToken(FList[i]^).token of
       tkWhitespace: write(t, ' ');
