@@ -141,7 +141,7 @@ var
     PathList := TStringList.Create;
 
     //add debugging info and fpprof unit path
-    CommandLine := '-g -gl -Fu' + GetEnvironmentVariable('fpprof');
+    CommandLine := '-gl -Fu' + GetEnvironmentVariable('fpprof');
 
     for i := 1 to ParamCount do
     begin
@@ -215,15 +215,25 @@ var
     ShowArgOption('i','no-insert','Do not insert profiling code.');
     ShowArgOption('r','no-remove','Do not remove profiling code.');
     writeln;
+    writeln('Environment variable used:');
+    writeln('  fpprof      points to the directory containing the fpprof.pas unit.');
+    writeln('              current value is: ' + GetEnvironmentVariable('fpprof'));
+    writeln('  fpc         points to the compiler binary to be used.');
+    writeln('              current value is: ' + GetEnvironmentVariable('fpc'));
+    writeln;
   end;
 
   procedure TFPPApplication.Compile;
   var
     FPCProcess: TProcess;
+    lFPC: string;
   begin
     FPCProcess := TProcess.Create(nil);
     try
-      FPCProcess.CommandLine := 'fpc ' + Environment.CommandLine;
+      lFPC := GetEnvironmentVariable('fpc');
+      if lFPC = '' then
+        lFPC := 'fpc';
+      FPCProcess.CommandLine := lFPC + ' ' + Environment.CommandLine;
 
       writeln('executing: ', FPCProcess.CommandLine);
       writeln;
