@@ -29,10 +29,9 @@ type
 
   public
     constructor Create(TheOwner: TComponent); override;
-    destructor Destroy; override;
-
-    procedure Run;
-    procedure Usage;
+    destructor  Destroy; override;
+    procedure   Run;
+    procedure   Usage;
   end;
   
 var
@@ -58,7 +57,10 @@ var
   sTmp: string;
 begin
   if HasOption('h', 'help') then
+  begin
     Usage;
+    Exit;
+  end;
 
   if HasOption('l', 'log') then
     FPPReader := TFPPReader.Create(GetOptionValue('l', 'log'))
@@ -67,7 +69,10 @@ begin
     if FileExists('fpprof.xml') then
       FPPReader := TFPPReader.Create('fpprof.xml')
     else
+    begin
       Usage;
+      Exit;
+    end;
   end;
   
   try
@@ -140,7 +145,6 @@ begin
   ShowArgOption('f','format','latex','Latex format.');
   ShowArgOption('f','format','graphviz','GraphViz format (not all stats supported).');
   writeln;
-  halt;
 end;
 
 begin
