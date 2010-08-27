@@ -28,12 +28,32 @@
         <WorkingDirectory Value="\home\graemeg\programming\fpgui\docview\components\richtext\testing"/>
       </local>
     </RunParams>
-    <Units Count="1">
+    <Units Count="5">
       <Unit0>
         <Filename Value="fppview.pp"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="fppview"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="fppreader.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FPPReader"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="fppstats.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FPPStats"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="fppreport.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FPPReport"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="fpcallgraph.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="FPCallGraph"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
