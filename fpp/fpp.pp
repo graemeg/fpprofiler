@@ -65,64 +65,62 @@ var
     var
       i: integer;
     begin
-    //find uses clause and insert unit
-      for i := 0 to tokenlist.Count - 1 do
-        if tokenlist[i].token = tkUses then
+      //find uses clause and insert unit
+      for i := tokenlist.Count-1 downto 0 do
+      begin
+        if (tokenlist[i].token = tkUses) then
         begin
-        //insert fpprof unit (with whitespace and comma)
-          tokenlist.Insert(i + 1, tkIdentifier, ' fpprof,');
+          //insert fpprof unit (with whitespace and comma)
+          tokenlist.Insert(i - 1, tkIdentifier, ' fpprof, ');
           Exit;
         end;
+      end;
 
-    //unit not found, find program / unit keyword
-      for i := 0 to tokenlist.Count - 1 do
+      //unit not found, find program / unit keyword
+      for i := tokenlist.Count-1 downto 0 do
         if (tokenlist[i].token = tkProgram) or
           (tokenlist[i].token = tkUnit) then
         begin
-        //insert fpprof unit (with uses keyword)
-          tokenlist.Insert(i + 1, tkIdentifier, 'uses fpprof;');
+          //insert fpprof unit (with uses keyword)
+          tokenlist.Insert(i - 6, tkIdentifier, 'uses fpprof;');
           Exit;
         end;
 
-    //just try and insert it at the beginning
-      tokenlist.Insert(1, tkIdentifier, 'uses fpprof;');
+      //just try and insert it at the beginning
+      tokenlist.Insert(Tokenlist.Count-2, tkIdentifier, 'uses fpprof;');
     end;
 
   begin
-  //insert fpprof unit
+    //insert fpprof unit
     if ExtractFileExt(AFileName) <> '.inc' then
       InsertFPProfUnit;
 
-  //insert function fpprof_info after each tkBegin and before each tkEnd
-    i := 0;
+    //insert function fpprof_info after each tkBegin and before each tkEnd
     begin_count := 0;
-    while i < tokenlist.Count do
+    for i := tokenlist.Count-1 downto 0 do
     begin
       case tokenlist[i].token of
-        tkCase: Inc(begin_count);
+        tkCase:     inc(begin_count);
         tkBegin:
-        begin
-          Inc(begin_count);
+          begin
+            Inc(begin_count);
 
-          if begin_count = 1 then
-          begin
-            tokenlist.Insert(i + 1, tkIdentifier, ' fpprof_entry_profile; ');
-            Inc(i);
+            if begin_count = 1 then
+            begin
+              tokenlist.Insert(i-1, tkIdentifier, ' fpprof_entry_profile; '+LineEnding);
+            end;
           end;
-        end;
         tkEnd:
-        begin
-          if begin_count = 1 then
           begin
-            tokenlist.Insert(i - 1, tkIdentifier, ' ;fpprof_exit_profile; ');
-            Inc(i);
+            if begin_count = 1 then
+            begin
+              tokenlist.Insert(i+1 , tkIdentifier, ' fpprof_exit_profile; '+LineEnding);
+            end;
+            if begin_count > 0 then
+              Dec(begin_count);
           end;
-          if begin_count > 0 then
-            Dec(begin_count);
-        end;
-      end;
-      Inc(i);
-    end;
+      end; { case }
+    end; { while }
 
     //save result for debuging
     //tokenlist.SaveToFile('test.debug.pp');
@@ -150,11 +148,11 @@ var
       CommandLine := CommandLine + ' ' + ParamStr(i);
       param := ParamStr(i);
       case param[1] of
-        '-': if pos('-Fu', ParamStr(i)) <> 0 then
-            AddSearchPath(copy(ParamStr(i), 4, Length(ParamStr(i)) - 3));
-        else
-      //filename
-          AddSearchPath(ExtractFilePath(ExpandFileName(param)));
+        '-':
+            if pos('-Fu', ParamStr(i)) <> 0 then
+                AddSearchPath(copy(ParamStr(i), 4, Length(ParamStr(i)) - 3));
+            else
+              AddSearchPath(ExtractFilePath(ExpandFileName(param)));
       end;
     end;
   end;
