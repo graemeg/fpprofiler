@@ -162,30 +162,37 @@ begin
   inherited Run;
 
   FPCallGraph := TFPCallGraph.Create;
-  
-  Caller := TStringList.Create;
-  //first entry is mother of all calls so put it on the stack
-  Caller.Add(FReader[0].func);
-  
-  for i := 1 to FReader.Count - 1 do
-    if FReader[i].position = 'entry' then
-    begin
-      //writeln('  peeking: ',Caller[0]);
-      FPCallGraph.AddCall(Caller[0], FReader[i].func);
-      //writeln('  pushing: ',FReader[i].func);
-      Caller.Insert(0, FReader[i].func);
-    end
-    else
+  try
+    Caller := TStringList.Create;
+    try
+      writeln('Total Call Count = ', FReader.Count);
+      //first entry is mother of all calls so put it on the stack
+      Caller.Add(FReader[0].func);
+
+      for i := 0 to FReader.Count-1 do
       begin
-        //writeln('  popping: ',Caller[0]);
-        Caller.Delete(0);
+        if FReader[i].position = 'entry' then
+        begin
+          writeln('  peeking: ',Caller[0]);
+          FPCallGraph.AddCall(Caller[0], FReader[i].func);
+          writeln('  pushing: ',FReader[i].func);
+          Caller.Insert(0, FReader[i].func);
+        end
+        else
+        begin
+          writeln('  popping: ',Caller[0]);
+          Caller.Delete(0);
+        end;
       end;
-
-  Caller.Free;
-  
-  FPPReport.CallGraph(FPCallGraph);
-
-  FPCallGraph.Free;
+      writeln('********   FINISHED   *********');
+    finally
+      Caller.Free;
+    end;
+    
+    FPPReport.CallGraph(FPCallGraph);
+  finally
+    FPCallGraph.Free;
+  end;
 end;
 
 end.
