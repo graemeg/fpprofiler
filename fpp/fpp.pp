@@ -101,6 +101,8 @@ var
     begin
       case tokenlist[i].token of
         tkCase:     inc(begin_count);
+        tkFinally:  inc(begin_count);
+        tkExcept:   inc(begin_count);
         tkBegin:
           begin
             Inc(begin_count);
