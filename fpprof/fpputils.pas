@@ -257,7 +257,7 @@ begin
       tkSymmetricalDifference: write(t, '><');
       tkLineEnding: writeln(t, LineEnding);
       tkTab: writeln(t, #9);
-      tkDirective, tkDefine, tkInclude: write(t, '{', TPasToken(FList[i]^).value, '}')
+//      tkDirective, tkDefine, tkInclude: write(t, '{', TPasToken(FList[i]^).value, '}')
     else
       //remove comments from source
       if TPasToken(FList[i]^).token <> tkComment then
