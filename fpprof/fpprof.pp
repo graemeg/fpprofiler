@@ -20,7 +20,13 @@ unit fpprof;
 interface
 
 uses
-  SysUtils, lineinfo, FPPWriter;
+  SysUtils
+  {$IFDEF CPU32}
+  ,lineinfo
+  {$ELSE}
+  ,lnfodwrf
+  {$ENDIF}
+  ,FPPWriter;
 
 procedure fpprof_entry_profile;
 procedure fpprof_exit_profile;
