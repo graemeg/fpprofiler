@@ -62,12 +62,12 @@ end;
 
 procedure fpprof_entry_profile;
 begin
-  fpprof_info('entry ', get_frame);
+  fpprof_info('entry', get_frame);
 end;
 
 procedure fpprof_exit_profile;
 begin
-  fpprof_info('exit ', get_frame);
+  fpprof_info('exit', get_frame);
 end;
 
 procedure fpprof_initialize;
