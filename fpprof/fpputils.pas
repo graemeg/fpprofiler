@@ -230,7 +230,7 @@ begin
   begin
     case TPasToken(FList[i]^).token of
       tkWhitespace: write(t, ' ');
-      tkString: write(t, chr(39) + TPasToken(FList[i]^).value + chr(39));
+      tkString: write(t, TPasToken(FList[i]^).value );
       tkBraceOpen: write(t, '(');
       tkBraceClose: write(t, ')');
       tkMul: write(t, '*');
