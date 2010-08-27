@@ -63,40 +63,48 @@ begin
   if HasOption('l', 'log') then
     FPPReader := TFPPReader.Create(GetOptionValue('l', 'log'))
   else
+  begin
     if FileExists('fpprof.xml') then
       FPPReader := TFPPReader.Create('fpprof.xml')
     else
       Usage;
-
-  //default
-  ReportType := rtPlain;
-  if HasOption('f','format') then
-  begin
-    sTmp := GetOptionValue('f', 'format');
-    //if sTmp = 'latex' then ReportType := rtLatex;
-    if sTmp = 'graphviz' then ReportType := rtGraphViz;
   end;
-
-  if HasOption('s','stat') then
-  begin
-    sTmp := GetOptionValue('s', 'stat');
-    if sTmp = 'callgraph' then
-      ProfStats := TCallGraphStats.Create(FPPReader, ReportType)
-    else
-      if sTmp = 'flat' then
-        ProfStats := TFlatProfStats.Create(FPPReader, ReportType)
-      else
-        //invalid stat
-        ProfStats := TFlatProfStats.Create(FPPReader, ReportType)
-  end
-  else
+  
+  try
     //default
-    ProfStats := TFlatProfStats.Create(FPPReader, ReportType);
-
-  ProfStats.Run;
-  ProfStats.Free;
-
-  FPPReader.Free;
+    ReportType := rtPlain;
+    if HasOption('f','format') then
+    begin
+      sTmp := GetOptionValue('f', 'format');
+      //if sTmp = 'latex' then ReportType := rtLatex;
+      if sTmp = 'graphviz' then 
+        ReportType := rtGraphViz;
+    end;
+  
+    try
+      if HasOption('s','stat') then
+      begin
+        sTmp := GetOptionValue('s', 'stat');
+        if sTmp = 'callgraph' then
+          ProfStats := TCallGraphStats.Create(FPPReader, ReportType)
+        else
+          if sTmp = 'flat' then
+            ProfStats := TFlatProfStats.Create(FPPReader, ReportType)
+          else
+            //invalid stat
+            ProfStats := TFlatProfStats.Create(FPPReader, ReportType)
+      end
+      else
+        //default
+        ProfStats := TFlatProfStats.Create(FPPReader, ReportType);
+    
+      ProfStats.Run;
+    finally
+      ProfStats.Free;
+    end;
+  finally
+    FPPReader.Free;
+  end;
 end;
 
 procedure TFPPViewApp.Usage;
