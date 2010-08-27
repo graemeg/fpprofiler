@@ -22,17 +22,20 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="-MObjFPC -Scghi -O1 -gl -gv -vewnhi -l -Fi\home\graemeg\programming\fpgui\docview\components\richtext\testing\ -Fu\home\graemeg\programming\fpgui\docview\components\richtext\ -Fu\home\graemeg\programming\fpgui\docview\src\ -Fu\home\graemeg\programming\fpgui\lib\x86_64-linux\ -Fu\opt\lazarus\packager\units\x86_64-linux\ -Fu\home\graemeg\programming\fpgui\docview\components\richtext\testing\ -Fu. -FUunits -oproject1 project1.lpr"/>
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-        <WorkingDirectory Value="\home\graemeg\programming\fpgui\docview\components\richtext\testing"/>
       </local>
     </RunParams>
-    <Units Count="1">
+    <Units Count="2">
       <Unit0>
         <Filename Value="fpp.pp"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="fpp"/>
       </Unit0>
+      <Unit1>
+        <Filename Value="fpprof\fpputils.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="fpputils"/>
+      </Unit1>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
