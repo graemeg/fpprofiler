@@ -83,28 +83,29 @@ begin
   SetLength(FList, FCount);
 
   ReadXMLFile(XMLDoc, AFileName);
-  Node := XMLDoc.FindNode('profilelog');
-  Node := Node.FindNode('tracelog');
+  try
+    Node := XMLDoc.FindNode('profilelog');
+    Node := Node.FindNode('tracelog');
 
-  NodeList := Node.GetChildNodes;
-  
-  for i := 0 to NodeList.Count -1 do
-  begin
-    Attributes := NodeList[i].Attributes;
-    AddData(Attributes.GetNamedItem('pos').NodeValue,
-            Attributes.GetNamedItem('time').NodeValue,
-            Attributes.GetNamedItem('func').NodeValue,
-            Attributes.GetNamedItem('source').NodeValue,
-            Attributes.GetNamedItem('line').NodeValue);
+    NodeList := Node.GetChildNodes;
+
+    for i := 0 to NodeList.Count -1 do
+    begin
+      Attributes := NodeList[i].Attributes;
+      AddData(Attributes.GetNamedItem('pos').NodeValue,
+              Attributes.GetNamedItem('time').NodeValue,
+              Attributes.GetNamedItem('func').NodeValue,
+              Attributes.GetNamedItem('source').NodeValue,
+              Attributes.GetNamedItem('line').NodeValue);
+    end;
+  finally
+    XMLDoc.Free;
   end;
-
-  Node.Free;
-  NodeList.Free;
-  XMLDoc.Free;
 end;
 
 destructor TFPPReader.Destroy;
 begin
+  SetLength(FList, 0);
   inherited Destroy;
 end;
 
